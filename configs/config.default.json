@@ -1,0 +1,11 @@
+{
+    // For singletons/couch, which has 'couch' as the id and the config name.
+    "couch": {
+        // An info for debugging.
+        "debugging": true
+        // "host": "127.0.0.1",
+        // "port": "5984",
+        // "auth": "null",
+        // "secure": "false"
+    }
+}
