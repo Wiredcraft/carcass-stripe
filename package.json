@@ -1,0 +1,46 @@
+{
+  "name": "carcass-couch",
+  "version": "0.0.0",
+  "description": "(Node.js) A simple wrap of cradle plus some stream APIs, in Carcass style.",
+  "author": {
+    "name": "devo.ps",
+    "email": "info@devo.ps",
+    "url": "https://github.com/devo-ps"
+  },
+  "contributors": [],
+  "keywords": [
+    "carcass",
+    "couch",
+    "couchdb",
+    "cradle",
+    "stream"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devo-ps/carcass-couch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devo-ps/carcass-couch/issues"
+  },
+  "homepage": "https://github.com/devo-ps/carcass-couch",
+  "dependencies": {
+    "cradle": "~0.6.7",
+    "debug": "0.x",
+    "through2": "1.x"
+  },
+  "devDependencies": {
+    "carcass": "latest",
+    "carcass-config": "latest",
+    "gulp": "latest",
+    "gulp-coffee": "latest",
+    "gulp-coffeelint": "latest",
+    "gulp-jshint": "latest",
+    "gulp-mocha": "latest",
+    "gulp-util": "latest",
+    "jshint-stylish": "latest",
+    "should": "latest",
+    "uid2": "latest"
+  },
+  "scripts": {}
+}
