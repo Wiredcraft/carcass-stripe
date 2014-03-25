@@ -13,7 +13,7 @@ module.exports = class Couch
     ###
     constructor: (options) ->
         @id(options)
-        debug('initializing couch %s.', @id())
+        debug('initializing the %s couch.', @id())
 
     ###*
      * Cache of the connection.

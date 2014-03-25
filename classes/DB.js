@@ -26,7 +26,7 @@ module.exports = DB = (function() {
   function DB(options) {
     this.id(options);
     this.id(this.id().toLowerCase().replace(/^[^a-z]+/, ''));
-    debug('initializing couch db %s.', this.id());
+    debug('initializing the %s couch db.', this.id());
   }
 
 

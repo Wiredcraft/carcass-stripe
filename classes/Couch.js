@@ -20,7 +20,7 @@ module.exports = Couch = (function() {
    */
   function Couch(options) {
     this.id(options);
-    debug('initializing couch %s.', this.id());
+    debug('initializing the %s couch.', this.id());
   }
 
 

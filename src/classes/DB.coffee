@@ -18,7 +18,7 @@ module.exports = class DB
         # Only lowercase characters (a-z), digits (0-9), and any of the characters
         # _, $, (, ), +, -, and / are allowed. Must begin with a letter.
         @id(@id().toLowerCase().replace(/^[^a-z]+/, ''))
-        debug('initializing couch db %s.', @id())
+        debug('initializing the %s couch db.', @id())
 
     ###*
      * Cache of the couch instance.
