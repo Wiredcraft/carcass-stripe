@@ -2,13 +2,14 @@
 
 var should = require('should');
 var lib = require('../');
+var example = require('../example');
 
 describe('Class / Couch:', function() {
 
     var Couch = lib.classes.Couch;
 
     before(function(done) {
-        lib.reload(done);
+        example.reload(done);
     });
 
     it('should be a class', function() {
@@ -44,8 +45,8 @@ describe('Class / Couch:', function() {
         });
 
         it('can have a config manager', function() {
-            couch.configManager(lib).should.equal(couch);
-            couch.configManager().should.equal(lib);
+            couch.configManager(example).should.equal(couch);
+            couch.configManager().should.equal(example);
         });
 
         it('can connect', function(done) {
@@ -73,7 +74,7 @@ describe('Class / Couch:', function() {
         var couch = null;
 
         before(function() {
-            couch = lib.getConsumer('Couch', 'couch');
+            couch = example.getConsumer('Couch', 'couch');
         });
 
         it('should have a config', function() {

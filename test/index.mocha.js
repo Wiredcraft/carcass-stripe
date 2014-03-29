@@ -1,4 +1,5 @@
 var lib = require('../');
+var example = require('../example');
 
 describe('Index:', function() {
 
@@ -12,8 +13,23 @@ describe('Index:', function() {
         lib.classes.should.have.property('DB').with.type('function');
     });
 
-    it('should have singletons', function() {
-        lib.should.have.property('singletons').with.type('object');
-        lib.singletons.should.have.property('couch').with.type('object');
+});
+
+describe('Example:', function() {
+
+    it('should be an object', function() {
+        example.should.be.type('object');
     });
+
+    it('should have classes', function() {
+        example.should.have.property('classes').with.type('object');
+        example.classes.should.have.property('Couch').with.type('function');
+        example.classes.should.have.property('DB').with.type('function');
+    });
+
+    it('should have singletons', function() {
+        example.should.have.property('singletons').with.type('object');
+        example.singletons.should.have.property('couch').with.type('object');
+    });
+
 });

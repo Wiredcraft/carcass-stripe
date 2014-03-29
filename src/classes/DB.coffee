@@ -15,10 +15,11 @@ module.exports = class DB
     ###
     constructor: (options) ->
         @id(options)
-        # Only lowercase characters (a-z), digits (0-9), and any of the characters
-        # _, $, (, ), +, -, and / are allowed. Must begin with a letter.
+        # Only lowercase characters (a-z), digits (0-9), and any of the
+        # characters _, $, (, ), +, -, and / are allowed. Must begin with a
+        # letter.
         @id(@id().toLowerCase().replace(/^[^a-z]+/, ''))
-        debug('initializing the %s couch db.', @id())
+        debug('initializing the %s db.', @id())
 
     ###*
      * Cache of the couch instance.
@@ -121,8 +122,8 @@ module.exports = class DB
     ###
 
     ###*
-     * Read data through a stream, where you pipe in an id or an object and pipe out
-     *   a result or an error.
+     * Read data through a stream, where you pipe in an id or an object and pipe
+     *   out a result or an error.
      *
      * @return {Transform} a transform stream
      *
@@ -151,7 +152,8 @@ module.exports = class DB
         )
 
     ###*
-     * Save data through a stream, where you pipe in data and pipe out the result.
+     * Save data through a stream, where you pipe in data and pipe out the
+     *   result.
      *
      * @return {Transform} a transform stream
      *

@@ -5,13 +5,14 @@ var carcass = require('carcass');
 var _ = carcass.highland;
 var uid = require('uid2');
 var lib = require('../');
+var example = require('../example');
 
 describe('Class / DB:', function() {
 
     var DB = lib.classes.DB;
 
     before(function(done) {
-        lib.reload(done);
+        example.reload(done);
     });
 
     it('should be a class', function() {
@@ -21,11 +22,10 @@ describe('Class / DB:', function() {
 
     describe('An instance:', function() {
 
-        var couch = null;
+        var couch = example.singletons.couch;
         var db = null;
 
         before(function() {
-            couch = lib.singletons.couch;
             db = new DB();
         });
 
@@ -49,8 +49,8 @@ describe('Class / DB:', function() {
         });
 
         it('can have a config manager', function() {
-            db.configManager(lib).should.equal(db);
-            db.configManager().should.equal(lib);
+            db.configManager(example).should.equal(db);
+            db.configManager().should.equal(example);
         });
 
         it('can have a couch', function() {

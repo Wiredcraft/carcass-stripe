@@ -26,7 +26,7 @@ module.exports = DB = (function() {
   function DB(options) {
     this.id(options);
     this.id(this.id().toLowerCase().replace(/^[^a-z]+/, ''));
-    debug('initializing the %s couch db.', this.id());
+    debug('initializing the %s db.', this.id());
   }
 
 
@@ -203,8 +203,8 @@ module.exports = DB = (function() {
 
 
   /**
-   * Read data through a stream, where you pipe in an id or an object and pipe out
-   *   a result or an error.
+   * Read data through a stream, where you pipe in an id or an object and pipe
+   *   out a result or an error.
    *
    * @return {Transform} a transform stream
    *
@@ -250,7 +250,8 @@ module.exports = DB = (function() {
 
 
   /**
-   * Save data through a stream, where you pipe in data and pipe out the result.
+   * Save data through a stream, where you pipe in data and pipe out the
+   *   result.
    *
    * @return {Transform} a transform stream
    *
