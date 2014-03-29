@@ -3,11 +3,13 @@
   "version": "0.0.1",
   "description": "(Node.js) A simple wrap of cradle plus some stream APIs, in Carcass style.",
   "author": {
-    "name": "devo.ps",
-    "email": "info@devo.ps",
-    "url": "https://github.com/devo-ps"
+    "name": "Wiredcraft",
+    "email": "info@wiredcraft.com",
+    "url": "http://wiredcraft.com"
   },
-  "contributors": [],
+  "contributors": [
+    "Makara Wang"
+  ],
   "keywords": [
     "carcass",
     "couch",
@@ -18,12 +20,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/devo-ps/carcass-couch.git"
+    "url": "https://github.com/Wiredcraft/carcass-couch.git"
   },
   "bugs": {
-    "url": "https://github.com/devo-ps/carcass-couch/issues"
+    "url": "https://github.com/Wiredcraft/carcass-couch/issues"
   },
-  "homepage": "https://github.com/devo-ps/carcass-couch",
+  "homepage": "https://github.com/Wiredcraft/carcass-couch",
   "dependencies": {
     "cradle": "~0.6.7",
     "debug": "0.x",
