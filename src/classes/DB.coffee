@@ -4,6 +4,7 @@ carcass = require('carcass')
 config = require('carcass-config')
 through2 = require('through2')
 isString = carcass.String.isString
+isObject = carcass.Object.isObject
 last = carcass.Array.prototype.last
 
 ###*
@@ -51,16 +52,23 @@ module.exports = class DB
         @couch().connect((err, conn) =>
             return done(err) if err
             db = conn.database(@id())
+            # TODO: confirm this point.
+            # Cache early so the operations don't get done many times.
+            @db(db)
             # Check existence.
-            db.exists((err, exists) =>
+            db.exists((err, exists) ->
                 return done(err) if err
-                if exists
-                    @db(db)
-                    return done(null, db)
+                return done(null, db) if exists
                 # Create.
-                db.create((err) =>
+                db.create((err) ->
                     return done(err) if err
-                    @db(db)
+                    # Save design documents. This doesn't block the process and
+                    # we don't care if there's a broken view.
+                    if config.design?
+                        for key, doc of config.design
+                            db.save('_design/' + key, doc, (err) ->
+                                debug(err) if err
+                            )
                     return done(null, db)
                 )
             )
@@ -118,7 +126,18 @@ module.exports = class DB
         return @
 
     ###*
+     * Route view.
+     *
+     * @public
+    ####
+    view: (args...) ->
+        done = last.call(args)
+        @declare((err, db) -> if err then done?(err) else db.view(args...))
+
+    ###*
      * Stream APIs.
+     *
+     * TODO: handle errors?
     ###
 
     ###*
@@ -129,7 +148,7 @@ module.exports = class DB
      *
      * @public
     ###
-    streamRead: (options = {}) ->
+    streamRead: ->
         self = @
         return through2.obj((chunk, enc, done) ->
             if isString(chunk)
@@ -159,7 +178,7 @@ module.exports = class DB
      *
      * @public
     ###
-    streamSave: (options = {}) ->
+    streamSave: ->
         self = @
         return through2.obj((chunk, enc, done) ->
             # Assume it's an object.
@@ -193,7 +212,7 @@ module.exports = class DB
      *
      * @public
     ###
-    streamSaveAndRead: (options = {}) ->
+    streamSaveAndRead: ->
         self = @
         return through2.obj((chunk, enc, done) ->
             # Assume it's an object.
@@ -218,6 +237,27 @@ module.exports = class DB
                     @push(doc)
                     done()
                 )
+        )
+
+    ###*
+     * Read a view through a stream, where you pipe in a key or an object and
+     *   pipe out the results or an error.
+     *
+     * @param {String} view the view name e.g. 'myDesign/myView'
+     *
+     * @return {Transform} a transform stream
+     *
+     * @public
+    ###
+    streamView: (view) ->
+        self = @
+        return through2.obj((chunk, enc, done) ->
+            chunk = { key: chunk } if not isObject(chunk)
+            self.view(view, chunk, (err, docs) =>
+                return done() if err
+                @push(doc) for doc in docs
+                done()
+            )
         )
 
 ###*

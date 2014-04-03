@@ -1,4 +1,4 @@
-var DB, carcass, config, debug, isString, last, through2,
+var DB, carcass, config, debug, isObject, isString, last, through2,
   __slice = [].slice;
 
 debug = require('debug')('carcass:couch:db');
@@ -10,6 +10,8 @@ config = require('carcass-config');
 through2 = require('through2');
 
 isString = carcass.String.isString;
+
+isObject = carcass.Object.isObject;
 
 last = carcass.Array.prototype.last;
 
@@ -72,19 +74,30 @@ module.exports = DB = (function() {
           return done(err);
         }
         db = conn.database(_this.id());
+        _this.db(db);
         return db.exists(function(err, exists) {
           if (err) {
             return done(err);
           }
           if (exists) {
-            _this.db(db);
             return done(null, db);
           }
           return db.create(function(err) {
+            var doc, key, _ref1;
             if (err) {
               return done(err);
             }
-            _this.db(db);
+            if (config.design != null) {
+              _ref1 = config.design;
+              for (key in _ref1) {
+                doc = _ref1[key];
+                db.save('_design/' + key, doc, function(err) {
+                  if (err) {
+                    return debug(err);
+                  }
+                });
+              }
+            }
             return done(null, db);
           });
         });
@@ -198,7 +211,29 @@ module.exports = DB = (function() {
 
 
   /**
+   * Route view.
+   *
+   * @public
+   */
+
+  DB.prototype.view = function() {
+    var args, done;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    done = last.call(args);
+    return this.declare(function(err, db) {
+      if (err) {
+        return typeof done === "function" ? done(err) : void 0;
+      } else {
+        return db.view.apply(db, args);
+      }
+    });
+  };
+
+
+  /**
    * Stream APIs.
+   *
+   * TODO: handle errors?
    */
 
 
@@ -211,11 +246,8 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.streamRead = function(options) {
+  DB.prototype.streamRead = function() {
     var self;
-    if (options == null) {
-      options = {};
-    }
     self = this;
     return through2.obj(function(chunk, enc, done) {
       var id, rev, _ref, _ref1, _ref2, _ref3;
@@ -258,11 +290,8 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.streamSave = function(options) {
+  DB.prototype.streamSave = function() {
     var self;
-    if (options == null) {
-      options = {};
-    }
     self = this;
     return through2.obj(function(chunk, enc, done) {
       var id, rev, _ref, _ref1, _ref2, _ref3;
@@ -311,11 +340,8 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.streamSaveAndRead = function(options) {
+  DB.prototype.streamSaveAndRead = function() {
     var self;
-    if (options == null) {
-      options = {};
-    }
     self = this;
     return through2.obj(function(chunk, enc, done) {
       var id, rev, _ref, _ref1, _ref2, _ref3;
@@ -352,6 +378,43 @@ module.exports = DB = (function() {
           };
         })(this));
       }
+    });
+  };
+
+
+  /**
+   * Read a view through a stream, where you pipe in a key or an object and
+   *   pipe out the results or an error.
+   *
+   * @param {String} view the view name e.g. 'myDesign/myView'
+   *
+   * @return {Transform} a transform stream
+   *
+   * @public
+   */
+
+  DB.prototype.streamView = function(view) {
+    var self;
+    self = this;
+    return through2.obj(function(chunk, enc, done) {
+      if (!isObject(chunk)) {
+        chunk = {
+          key: chunk
+        };
+      }
+      return self.view(view, chunk, (function(_this) {
+        return function(err, docs) {
+          var doc, _i, _len;
+          if (err) {
+            return done();
+          }
+          for (_i = 0, _len = docs.length; _i < _len; _i++) {
+            doc = docs[_i];
+            _this.push(doc);
+          }
+          return done();
+        };
+      })(this));
     });
   };
 

@@ -253,5 +253,165 @@ describe('Class / DB:', function() {
         it('can destroy', function(done) {
             db.destroy(done).should.equal(db);
         });
+
     });
+
+    describe('The lorem instance:', function() {
+
+        var couch = example.singletons.couch;
+        var db = null;
+
+        before(function() {
+            db = couch.getDB('lorem');
+        });
+
+        it('can declare', function(done) {
+            should.not.exist(db.db());
+            db.declare(function(err, _db) {
+                db.db().should.equal(_db);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can save', function(done) {
+            var id = uid(7);
+            db.save(id, {
+                something: 'a'
+            }, function(err, res) {
+                res.should.have.property('ok', true);
+                res.should.have.property('id', id);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can save', function(done) {
+            var id = uid(7);
+            db.save(id, {
+                something: 'a'
+            }, function(err, res) {
+                res.should.have.property('ok', true);
+                res.should.have.property('id', id);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can save', function(done) {
+            var id = uid(7);
+            db.save(id, {
+                something: 'b'
+            }, function(err, res) {
+                res.should.have.property('ok', true);
+                res.should.have.property('id', id);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can save', function(done) {
+            var id = uid(7);
+            db.save(id, {
+                nothing: true
+            }, function(err, res) {
+                res.should.have.property('ok', true);
+                res.should.have.property('id', id);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can view', function(done) {
+            db.view('find/bySomething', function(err, res) {
+                res.should.be.instanceOf(Array).with.lengthOf(3);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can view', function(done) {
+            db.view('find/bySomething', {
+                key: 'a'
+            }, function(err, res) {
+                res.should.be.instanceOf(Array).with.lengthOf(2);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can view', function(done) {
+            db.view('find/bySomething', {
+                key: 'b'
+            }, function(err, res) {
+                res.should.be.instanceOf(Array).with.lengthOf(1);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can view', function(done) {
+            db.view('find/bySomething', {
+                key: 'c'
+            }, function(err, res) {
+                res.should.be.instanceOf(Array).with.lengthOf(0);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can view with stream', function(done) {
+            _([{}]).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+                res.should.be.instanceOf(Array).with.lengthOf(3);
+                done();
+            });
+        });
+
+        it('can view with stream (another syntax)', function(done) {
+            var stream = db.streamView('find/bySomething');
+            stream.write({});
+            stream.end();
+            _(stream).toArray(function(res) {
+                res.should.be.instanceOf(Array).with.lengthOf(3);
+                done();
+            });
+        });
+
+        it('can view with stream', function(done) {
+            _(['a']).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+                res.should.be.instanceOf(Array).with.lengthOf(2);
+                done();
+            });
+        });
+
+        it('can view with stream (another syntax)', function(done) {
+            _([{
+                key: 'a'
+            }]).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+                res.should.be.instanceOf(Array).with.lengthOf(2);
+                done();
+            });
+        });
+
+        it('can view with stream (another syntax)', function(done) {
+            var stream = db.streamView('find/bySomething');
+            stream.write('a');
+            stream.end();
+            _(stream).toArray(function(res) {
+                res.should.be.instanceOf(Array).with.lengthOf(2);
+                done();
+            });
+        });
+
+        it('can view with stream', function(done) {
+            _(['b']).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+                res.should.be.instanceOf(Array).with.lengthOf(1);
+                done();
+            });
+        });
+
+        it('can view with stream', function(done) {
+            _(['c']).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+                res.should.be.instanceOf(Array).with.lengthOf(0);
+                done();
+            });
+        });
+
+        it('can destroy', function(done) {
+            db.destroy(done).should.equal(db);
+        });
+
+    });
+
 });

@@ -7,5 +7,16 @@
         // "port": "5984",
         // "auth": "null",
         // "secure": "false"
+    },
+    "lorem": {
+        "design": {
+            "find": {
+                "views": {
+                    "bySomething": {
+                        "map": "function(doc) { if (doc.something) emit(doc.something, null); }"
+                    }
+                }
+            }
+        }
     }
 }
