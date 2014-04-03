@@ -1,4 +1,9 @@
 
+0.2.0 / 2014-04-03
+==================
+
+ * Improved db.declare() to have design docs saved. Added db.view() and db.streamView().
+
 0.1.0 / 2014-03-31
 ==================
 
