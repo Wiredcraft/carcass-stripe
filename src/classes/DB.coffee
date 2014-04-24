@@ -1,6 +1,7 @@
 debug = require('debug')('carcass:couch:db')
 
 carcass = require('carcass')
+highland = carcass.highland
 config = require('carcass-config')
 through2 = require('through2')
 _ = require('lodash')
@@ -81,6 +82,20 @@ module.exports = class DB
     destroy: (done = ->) ->
         @db()?.destroy(done)
         @db(null)
+        return @
+
+    ###*
+     * Save design documents.
+    ###
+    saveDesignDocs: (done = ->) ->
+        config = @config() ? {}
+        @declare((err, db) ->
+            return done(err) if err
+            return done() if not config.design?
+            highland(_.pairs(config.design)).flatMap((pair) ->
+                return highland.wrapInvoke('save', '_design/' + pair[0], pair[1])(db)
+            ).on('error', (err) -> done(err)).toArray((res) -> done(null, res))
+        )
         return @
 
     ###*

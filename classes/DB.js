@@ -1,9 +1,11 @@
-var DB, carcass, config, debug, through2, _,
+var DB, carcass, config, debug, highland, through2, _,
   __slice = [].slice;
 
 debug = require('debug')('carcass:couch:db');
 
 carcass = require('carcass');
+
+highland = carcass.highland;
 
 config = require('carcass-config');
 
@@ -118,6 +120,35 @@ module.exports = DB = (function() {
       _ref.destroy(done);
     }
     this.db(null);
+    return this;
+  };
+
+
+  /**
+   * Save design documents.
+   */
+
+  DB.prototype.saveDesignDocs = function(done) {
+    var _ref;
+    if (done == null) {
+      done = function() {};
+    }
+    config = (_ref = this.config()) != null ? _ref : {};
+    this.declare(function(err, db) {
+      if (err) {
+        return done(err);
+      }
+      if (config.design == null) {
+        return done();
+      }
+      return highland(_.pairs(config.design)).flatMap(function(pair) {
+        return highland.wrapInvoke('save', '_design/' + pair[0], pair[1])(db);
+      }).on('error', function(err) {
+        return done(err);
+      }).toArray(function(res) {
+        return done(null, res);
+      });
+    });
     return this;
   };
 

@@ -1,4 +1,4 @@
-// var debug = require('debug')('carcass:test');
+var debug = require('debug')('carcass:test');
 
 var should = require('should');
 var carcass = require('carcass');
@@ -269,6 +269,13 @@ describe('Class / DB:', function() {
             should.not.exist(db.db());
             db.declare(function(err, _db) {
                 db.db().should.equal(_db);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can save the view again', function(done) {
+            db.saveDesignDocs(function(err, res) {
+                debug('res', res);
                 done(err);
             }).should.equal(db);
         });

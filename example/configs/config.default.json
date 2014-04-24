@@ -16,6 +16,13 @@
                         "map": "function(doc) { if (doc.something) emit(doc.something, null); }"
                     }
                 }
+            },
+            "lorem": {
+                "views": {
+                    "byLorem": {
+                        "map": "function(doc) { if (doc.lorem) emit(doc.lorem, null); }"
+                    }
+                }
             }
         }
     }
