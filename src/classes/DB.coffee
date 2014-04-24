@@ -3,9 +3,7 @@ debug = require('debug')('carcass:couch:db')
 carcass = require('carcass')
 config = require('carcass-config')
 through2 = require('through2')
-isString = carcass.String.isString
-isObject = carcass.Object.isObject
-last = carcass.Array.prototype.last
+_ = require('lodash')
 
 ###*
  * Represents a CouchDB database.
@@ -90,39 +88,34 @@ module.exports = class DB
      *
      * @public
     ####
-    read: (args...) ->
-        done = last.call(args)
-        @declare((err, db) -> if err then done?(err) else db.get(args...))
+    read: (args..., done = ->) ->
+        @declare((err, db) -> if err then done(err) else db.get(args..., done))
 
     ###*
      * Route save.
      *
      * @public
     ####
-    save: (args...) ->
-        done = last.call(args)
-        @declare((err, db) -> if err then done?(err) else db.save(args...))
+    save: (args..., done = ->) ->
+        @declare((err, db) -> if err then done(err) else db.save(args..., done))
 
     ###*
      * Route remove.
      *
      * @public
     ####
-    remove: (args...) ->
-        done = last.call(args)
-        @declare((err, db) -> if err then done?(err) else db.remove(args...))
+    remove: (args..., done = ->) ->
+        @declare((err, db) -> if err then done(err) else db.remove(args..., done))
 
     ###*
      * Save and read; just a shortcut.
      *
      * @public
     ####
-    saveAndRead: (args...) ->
-        done = args.pop()
-        args.push((err, res) =>
-            if err then done?(err) else @read(res.id, res.rev, done)
+    saveAndRead: (args..., done = ->) ->
+        @save(args..., (err, res) =>
+            if err then done(err) else @read(res.id, res.rev, done)
         )
-        @save(args...)
         return @
 
     ###*
@@ -130,9 +123,8 @@ module.exports = class DB
      *
      * @public
     ####
-    view: (args...) ->
-        done = last.call(args)
-        @declare((err, db) -> if err then done?(err) else db.view(args...))
+    view: (args..., done = ->) ->
+        @declare((err, db) -> if err then done(err) else db.view(args..., done))
 
     ###*
      * Stream APIs.
@@ -151,7 +143,7 @@ module.exports = class DB
     streamRead: ->
         self = @
         return through2.obj((chunk, enc, done) ->
-            if isString(chunk)
+            if _.isString(chunk)
                 self.read(chunk, (err, doc) =>
                     return done() if err
                     @push(doc)
@@ -252,7 +244,7 @@ module.exports = class DB
     streamView: (view) ->
         self = @
         return through2.obj((chunk, enc, done) ->
-            chunk = { key: chunk } if not isObject(chunk)
+            chunk = { key: chunk } if not _.isObject(chunk)
             self.view(view, chunk, (err, docs) =>
                 return done() if err
                 @push(doc) for doc in docs

@@ -1,4 +1,4 @@
-var DB, carcass, config, debug, isObject, isString, last, through2,
+var DB, carcass, config, debug, through2, _,
   __slice = [].slice;
 
 debug = require('debug')('carcass:couch:db');
@@ -9,11 +9,7 @@ config = require('carcass-config');
 
 through2 = require('through2');
 
-isString = carcass.String.isString;
-
-isObject = carcass.Object.isObject;
-
-last = carcass.Array.prototype.last;
+_ = require('lodash');
 
 
 /**
@@ -133,14 +129,16 @@ module.exports = DB = (function() {
    */
 
   DB.prototype.read = function() {
-    var args, done;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    done = last.call(args);
+    var args, done, _i;
+    args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
+    if (done == null) {
+      done = function() {};
+    }
     return this.declare(function(err, db) {
       if (err) {
-        return typeof done === "function" ? done(err) : void 0;
+        return done(err);
       } else {
-        return db.get.apply(db, args);
+        return db.get.apply(db, __slice.call(args).concat([done]));
       }
     });
   };
@@ -153,14 +151,16 @@ module.exports = DB = (function() {
    */
 
   DB.prototype.save = function() {
-    var args, done;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    done = last.call(args);
+    var args, done, _i;
+    args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
+    if (done == null) {
+      done = function() {};
+    }
     return this.declare(function(err, db) {
       if (err) {
-        return typeof done === "function" ? done(err) : void 0;
+        return done(err);
       } else {
-        return db.save.apply(db, args);
+        return db.save.apply(db, __slice.call(args).concat([done]));
       }
     });
   };
@@ -173,14 +173,16 @@ module.exports = DB = (function() {
    */
 
   DB.prototype.remove = function() {
-    var args, done;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    done = last.call(args);
+    var args, done, _i;
+    args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
+    if (done == null) {
+      done = function() {};
+    }
     return this.declare(function(err, db) {
       if (err) {
-        return typeof done === "function" ? done(err) : void 0;
+        return done(err);
       } else {
-        return db.remove.apply(db, args);
+        return db.remove.apply(db, __slice.call(args).concat([done]));
       }
     });
   };
@@ -193,19 +195,20 @@ module.exports = DB = (function() {
    */
 
   DB.prototype.saveAndRead = function() {
-    var args, done;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    done = args.pop();
-    args.push((function(_this) {
+    var args, done, _i;
+    args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
+    if (done == null) {
+      done = function() {};
+    }
+    this.save.apply(this, __slice.call(args).concat([(function(_this) {
       return function(err, res) {
         if (err) {
-          return typeof done === "function" ? done(err) : void 0;
+          return done(err);
         } else {
           return _this.read(res.id, res.rev, done);
         }
       };
-    })(this));
-    this.save.apply(this, args);
+    })(this)]));
     return this;
   };
 
@@ -217,14 +220,16 @@ module.exports = DB = (function() {
    */
 
   DB.prototype.view = function() {
-    var args, done;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    done = last.call(args);
+    var args, done, _i;
+    args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
+    if (done == null) {
+      done = function() {};
+    }
     return this.declare(function(err, db) {
       if (err) {
-        return typeof done === "function" ? done(err) : void 0;
+        return done(err);
       } else {
-        return db.view.apply(db, args);
+        return db.view.apply(db, __slice.call(args).concat([done]));
       }
     });
   };
@@ -251,7 +256,7 @@ module.exports = DB = (function() {
     self = this;
     return through2.obj(function(chunk, enc, done) {
       var id, rev, _ref, _ref1, _ref2, _ref3;
-      if (isString(chunk)) {
+      if (_.isString(chunk)) {
         self.read(chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
@@ -397,7 +402,7 @@ module.exports = DB = (function() {
     var self;
     self = this;
     return through2.obj(function(chunk, enc, done) {
-      if (!isObject(chunk)) {
+      if (!_.isObject(chunk)) {
         chunk = {
           key: chunk
         };

@@ -27,10 +27,11 @@
   },
   "homepage": "https://github.com/Wiredcraft/carcass-couch",
   "dependencies": {
-    "carcass": ">=0.9.0",
-    "carcass-config": ">=0.0.1",
+    "carcass": "~0.11.0",
+    "carcass-config": "~0.2.0",
     "cradle": "~0.6.7",
     "debug": "*",
+    "lodash": "2.x",
     "through2": "1.x"
   },
   "devDependencies": {
