@@ -1,4 +1,9 @@
 
+0.3.1 / 2014-05-05
+==================
+
+ * Renamed an internal class (DB -> CouchDB) and use promise for internal cache.
+
 0.3.0 / 2014-04-24
 ==================
 
