@@ -77,7 +77,7 @@ module.exports = Couch = (function() {
    */
 
   Couch.prototype.getDB = function(options) {
-    return this.configManager().getConsumer('DB', options).couch(this);
+    return this.configManager().getConsumer('CouchDB', options).couch(this);
   };
 
   return Couch;

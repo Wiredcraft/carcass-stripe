@@ -1,29 +1,31 @@
-var DB, carcass, config, debug, highland, through2, _,
+var CouchDB, Promise, carcass, config, debug, highland, through2, _,
   __slice = [].slice;
 
 debug = require('debug')('carcass:couch:db');
 
-carcass = require('carcass');
+_ = require('lodash');
 
-highland = carcass.highland;
-
-config = require('carcass-config');
+Promise = require('bluebird');
 
 through2 = require('through2');
 
-_ = require('lodash');
+carcass = require('carcass');
+
+config = require('carcass-config');
+
+highland = carcass.highland;
 
 
 /**
  * Represents a CouchDB database.
  */
 
-module.exports = DB = (function() {
+module.exports = CouchDB = (function() {
 
   /**
    * Constructor.
    */
-  function DB(options) {
+  function CouchDB(options) {
     this.id(options);
     this.id(this.id().toLowerCase().replace(/^[^a-z]+/, ''));
     debug('initializing the %s db.', this.id());
@@ -36,7 +38,7 @@ module.exports = DB = (function() {
    * @type {Function}
    */
 
-  DB.prototype.couch = carcass.helpers.accessor('_couch');
+  CouchDB.prototype.couch = carcass.helpers.accessor('_couch');
 
 
   /**
@@ -45,7 +47,7 @@ module.exports = DB = (function() {
    * @type {Function}
    */
 
-  DB.prototype.db = carcass.helpers.accessor('_db');
+  CouchDB.prototype.db = carcass.helpers.accessor('_db');
 
 
   /**
@@ -54,53 +56,60 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.declare = function(done) {
-    var db, _ref;
+  CouchDB.prototype.declare = function(done) {
+    var fulfilled, promise, _ref;
     if (done == null) {
       done = function() {};
     }
-    db = this.db();
-    if (db != null) {
-      done(null, db);
+    fulfilled = function(db) {
+      return done(null, db);
+    };
+    promise = this.db();
+    if (promise != null) {
+      promise.then(fulfilled, done);
       return this;
     }
     config = (_ref = this.config()) != null ? _ref : {};
     debug('getting db %s from CouchDB', this.id(), config);
-    this.couch().connect((function(_this) {
-      return function(err, conn) {
-        if (err) {
-          return done(err);
-        }
-        db = conn.database(_this.id());
-        _this.db(db);
-        return db.exists(function(err, exists) {
+    promise = new Promise((function(_this) {
+      return function(resolve, reject) {
+        return _this.couch().connect(function(err, conn) {
+          var db;
           if (err) {
-            return done(err);
+            return reject(err);
           }
-          if (exists) {
-            return done(null, db);
-          }
-          return db.create(function(err) {
-            var doc, key, _ref1;
+          db = conn.database(_this.id());
+          return db.exists(function(err, exists) {
             if (err) {
-              return done(err);
+              return reject(err);
             }
-            if (config.design != null) {
-              _ref1 = config.design;
-              for (key in _ref1) {
-                doc = _ref1[key];
-                db.save('_design/' + key, doc, function(err) {
-                  if (err) {
-                    return debug(err);
-                  }
-                });
+            if (exists) {
+              return resolve(db);
+            }
+            return db.create(function(err) {
+              var doc, key, _ref1;
+              if (err) {
+                return reject(err);
               }
-            }
-            return done(null, db);
+              if (config.design != null) {
+                _ref1 = config.design;
+                for (key in _ref1) {
+                  doc = _ref1[key];
+                  db.save('_design/' + key, doc, function(err) {
+                    if (err) {
+                      return debug(err);
+                    }
+                  });
+                }
+              }
+              return resolve(db);
+            });
           });
         });
       };
     })(this));
+    this.db(promise);
+    promise.then(fulfilled, done);
     return this;
   };
 
@@ -111,13 +120,15 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.destroy = function(done) {
+  CouchDB.prototype.destroy = function(done) {
     var _ref;
     if (done == null) {
       done = function() {};
     }
     if ((_ref = this.db()) != null) {
-      _ref.destroy(done);
+      _ref.then(function(db) {
+        return db.destroy(done);
+      }, done);
     }
     this.db(null);
     return this;
@@ -128,7 +139,7 @@ module.exports = DB = (function() {
    * Save design documents.
    */
 
-  DB.prototype.saveDesignDocs = function(done) {
+  CouchDB.prototype.saveDesignDocs = function(done) {
     var _ref;
     if (done == null) {
       done = function() {};
@@ -159,7 +170,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.read = function() {
+  CouchDB.prototype.read = function() {
     var args, done, _i;
     args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
     if (done == null) {
@@ -181,7 +192,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.save = function() {
+  CouchDB.prototype.save = function() {
     var args, done, _i;
     args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
     if (done == null) {
@@ -203,7 +214,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.remove = function() {
+  CouchDB.prototype.remove = function() {
     var args, done, _i;
     args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
     if (done == null) {
@@ -225,7 +236,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.saveAndRead = function() {
+  CouchDB.prototype.saveAndRead = function() {
     var args, done, _i;
     args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
     if (done == null) {
@@ -250,7 +261,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.view = function() {
+  CouchDB.prototype.view = function() {
     var args, done, _i;
     args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
     if (done == null) {
@@ -282,7 +293,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.streamRead = function() {
+  CouchDB.prototype.streamRead = function() {
     var self;
     self = this;
     return through2.obj(function(chunk, enc, done) {
@@ -326,7 +337,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.streamSave = function() {
+  CouchDB.prototype.streamSave = function() {
     var self;
     self = this;
     return through2.obj(function(chunk, enc, done) {
@@ -376,7 +387,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.streamSaveAndRead = function() {
+  CouchDB.prototype.streamSaveAndRead = function() {
     var self;
     self = this;
     return through2.obj(function(chunk, enc, done) {
@@ -429,7 +440,7 @@ module.exports = DB = (function() {
    * @public
    */
 
-  DB.prototype.streamView = function(view) {
+  CouchDB.prototype.streamView = function(view) {
     var self;
     self = this;
     return through2.obj(function(chunk, enc, done) {
@@ -454,7 +465,7 @@ module.exports = DB = (function() {
     });
   };
 
-  return DB;
+  return CouchDB;
 
 })();
 
@@ -463,8 +474,8 @@ module.exports = DB = (function() {
  * Mixins.
  */
 
-carcass.mixable(DB);
+carcass.mixable(CouchDB);
 
-DB.prototype.mixin(carcass.proto.uid);
+CouchDB.prototype.mixin(carcass.proto.uid);
 
-DB.prototype.mixin(config.proto.consumer);
+CouchDB.prototype.mixin(config.proto.consumer);

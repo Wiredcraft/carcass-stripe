@@ -9,7 +9,7 @@ var example = require('../example');
 
 describe('Class / DB:', function() {
 
-    var DB = lib.classes.DB;
+    var DB = lib.classes.CouchDB;
 
     before(function(done) {
         example.reload(done);
@@ -26,15 +26,11 @@ describe('Class / DB:', function() {
         var db = null;
 
         before(function() {
-            db = new DB();
+            db = couch.getDB();
         });
 
         it('should be an object', function() {
             db.should.be.type('object');
-        });
-
-        it('should be mixable', function() {
-            db.should.have.property('mixin').with.type('function');
         });
 
         it('should have an id', function() {
@@ -48,14 +44,12 @@ describe('Class / DB:', function() {
             db.should.have.property('config').with.type('function');
         });
 
-        it('can have a config manager', function() {
-            db.configManager(example).should.equal(db);
+        it('should have a config manager', function() {
             db.configManager().should.equal(example);
         });
 
-        it('can have a couch', function() {
+        it('should have a couch', function() {
             db.should.have.property('couch').with.type('function');
-            db.couch(couch).should.equal(db);
             db.couch().should.equal(couch);
         });
 
@@ -75,16 +69,17 @@ describe('Class / DB:', function() {
         });
 
         it('can declare', function(done) {
+            // Declare twice at the same time.
+            var instance = null;
             should.not.exist(db.db());
             db.declare(function(err, _db) {
-                db.db().should.equal(_db);
-                done(err);
+                _db.should.be.type('object');
+                instance = _db;
+                // done(err);
             }).should.equal(db);
-        });
-
-        it('can declare again', function(done) {
             db.declare(function(err, _db) {
-                db.db().should.equal(_db);
+                _db.should.be.type('object');
+                _db.should.equal(instance);
                 done(err);
             }).should.equal(db);
         });
@@ -268,12 +263,12 @@ describe('Class / DB:', function() {
         it('can declare', function(done) {
             should.not.exist(db.db());
             db.declare(function(err, _db) {
-                db.db().should.equal(_db);
+                _db.should.be.type('object');
                 done(err);
             }).should.equal(db);
         });
 
-        it('can save the view again', function(done) {
+        it('can save the views', function(done) {
             db.saveDesignDocs(function(err, res) {
                 debug('res', res);
                 done(err);
@@ -417,6 +412,34 @@ describe('Class / DB:', function() {
 
         it('can destroy', function(done) {
             db.destroy(done).should.equal(db);
+        });
+
+    });
+
+    describe('An instance with a bad connection:', function() {
+
+        var couch = null;
+        var db = null;
+
+        before(function() {
+            couch = example.getConsumer('Couch', 'badCouch');
+            db = couch.getDB('lorem');
+        });
+
+        it('can not declare', function(done) {
+            should.not.exist(db.db());
+            db.declare(function(err, _db) {
+                should.exist(err);
+                should.not.exist(_db);
+                done();
+            }).should.equal(db);
+        });
+
+        it('can not destroy', function(done) {
+            db.destroy(function(err) {
+                should.exist(err);
+                done();
+            }).should.equal(db);
         });
 
     });

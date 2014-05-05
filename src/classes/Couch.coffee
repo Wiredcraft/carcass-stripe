@@ -35,6 +35,7 @@ module.exports = class Couch
         config = @config() ? {}
         debug('%s connecting to CouchDB', @id(), config)
         # Connect.
+        # TODO: really connect and detect connection errors?
         conn = new cradle.Connection(config)
         # Cache connection.
         @connection(conn)
@@ -58,7 +59,7 @@ module.exports = class Couch
      * @public
     ###
     getDB: (options) ->
-        return @configManager().getConsumer('DB', options).couch(@)
+        return @configManager().getConsumer('CouchDB', options).couch(@)
 
 ###*
  * Mixins.

@@ -4,9 +4,9 @@
         // An info for debugging.
         "debugging": true
         // "host": "127.0.0.1",
-        // "port": "5984",
-        // "auth": "null",
-        // "secure": "false"
+        // "port": 5984,
+        // "auth": null,
+        // "secure": false
     },
     "lorem": {
         "design": {

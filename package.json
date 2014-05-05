@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/Wiredcraft/carcass-couch",
   "dependencies": {
+    "bluebird": "1.x",
     "carcass": "~0.11.0",
     "carcass-config": "~0.2.0",
     "cradle": "~0.6.7",

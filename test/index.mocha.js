@@ -10,7 +10,7 @@ describe('Index:', function() {
     it('should have classes', function() {
         lib.should.have.property('classes').with.type('object');
         lib.classes.should.have.property('Couch').with.type('function');
-        lib.classes.should.have.property('DB').with.type('function');
+        lib.classes.should.have.property('CouchDB').with.type('function');
     });
 
 });
@@ -24,7 +24,7 @@ describe('Example:', function() {
     it('should have classes', function() {
         example.should.have.property('classes').with.type('object');
         example.classes.should.have.property('Couch').with.type('function');
-        example.classes.should.have.property('DB').with.type('function');
+        example.classes.should.have.property('CouchDB').with.type('function');
     });
 
     it('should have singletons', function() {

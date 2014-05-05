@@ -1,15 +1,16 @@
 debug = require('debug')('carcass:couch:db')
 
-carcass = require('carcass')
-highland = carcass.highland
-config = require('carcass-config')
-through2 = require('through2')
 _ = require('lodash')
+Promise = require('bluebird')
+through2 = require('through2')
+carcass = require('carcass')
+config = require('carcass-config')
+highland = carcass.highland
 
 ###*
  * Represents a CouchDB database.
 ###
-module.exports = class DB
+module.exports = class CouchDB
     ###*
      * Constructor.
     ###
@@ -41,37 +42,40 @@ module.exports = class DB
      * @public
     ###
     declare: (done = ->) ->
-        db = @db()
-        if db?
-            done(null, db)
+        fulfilled = (db) -> done(null, db)
+        promise = @db()
+        if promise?
+            promise.then(fulfilled, done)
             return @
         config = @config() ? {}
         debug('getting db %s from CouchDB', @id(), config)
-        # Connect.
-        @couch().connect((err, conn) =>
-            return done(err) if err
-            db = conn.database(@id())
-            # TODO: confirm this point.
-            # Cache early so the operations don't get done many times.
-            @db(db)
-            # Check existence.
-            db.exists((err, exists) ->
-                return done(err) if err
-                return done(null, db) if exists
-                # Create.
-                db.create((err) ->
-                    return done(err) if err
-                    # Save design documents. This doesn't block the process and
-                    # we don't care if there's a broken view.
-                    if config.design?
-                        for key, doc of config.design
-                            db.save('_design/' + key, doc, (err) ->
-                                debug(err) if err
-                            )
-                    return done(null, db)
+        promise = new Promise((resolve, reject) =>
+            # Connect.
+            @couch().connect((err, conn) =>
+                return reject(err) if err
+                db = conn.database(@id())
+                # Check existence.
+                db.exists((err, exists) ->
+                    return reject(err) if err
+                    return resolve(db) if exists
+                    # Create.
+                    db.create((err) ->
+                        return reject(err) if err
+                        # Save design documents. This doesn't block the process
+                        # and we don't care if there's a broken view.
+                        if config.design?
+                            for key, doc of config.design
+                                db.save('_design/' + key, doc, (err) ->
+                                    debug(err) if err
+                                )
+                        return resolve(db)
+                    )
                 )
             )
         )
+        # Cache the promise.
+        @db(promise)
+        promise.then(fulfilled, done)
         return @
 
     ###*
@@ -80,7 +84,9 @@ module.exports = class DB
      * @public
     ####
     destroy: (done = ->) ->
-        @db()?.destroy(done)
+        @db()?.then((db) ->
+            db.destroy(done)
+        , done)
         @db(null)
         return @
 
@@ -270,6 +276,6 @@ module.exports = class DB
 ###*
  * Mixins.
 ###
-carcass.mixable(DB)
-DB::mixin(carcass.proto.uid)
-DB::mixin(config.proto.consumer)
+carcass.mixable(CouchDB)
+CouchDB::mixin(carcass.proto.uid)
+CouchDB::mixin(config.proto.consumer)

@@ -22,15 +22,11 @@ describe('Class / Couch:', function() {
         var couch = null;
 
         before(function() {
-            couch = new Couch();
+            couch = example.getConsumer('Couch');
         });
 
         it('should be an object', function() {
             couch.should.be.type('object');
-        });
-
-        it('should be mixable', function() {
-            couch.should.have.property('mixin').with.type('function');
         });
 
         it('should have an id', function() {
@@ -44,8 +40,7 @@ describe('Class / Couch:', function() {
             couch.should.have.property('config').with.type('function');
         });
 
-        it('can have a config manager', function() {
-            couch.configManager(example).should.equal(couch);
+        it('should have a config manager', function() {
             couch.configManager().should.equal(example);
         });
 
