@@ -2,7 +2,7 @@ var debug = require('debug')('carcass:test');
 
 var should = require('should');
 var carcass = require('carcass');
-var _ = carcass.highland;
+var highland = carcass.highland;
 var uid = require('uid2');
 var lib = require('../');
 var example = require('../example');
@@ -174,7 +174,7 @@ describe('Class / DB:', function() {
             var id = uid(7);
             db.save(id, {}, function(err) {
                 if (err) return done(err);
-                _([id]).pipe(db.streamRead()).on('data', function(doc) {
+                highland.pipeThrough([id], db.streamRead()).on('data', function(doc) {
                     doc.should.be.type('object').with.property('_id', id);
                     done();
                 });
@@ -185,7 +185,7 @@ describe('Class / DB:', function() {
             var id = uid(7);
             db.save(id, {}, function(err, res) {
                 if (err) return done(err);
-                _([res]).pipe(db.streamRead()).on('data', function(doc) {
+                highland.pipeThrough([res], db.streamRead()).on('data', function(doc) {
                     doc.should.be.type('object').with.property('_id', id);
                     done();
                 });
@@ -196,9 +196,9 @@ describe('Class / DB:', function() {
             var id = uid(7);
             db.save(id, {}, function(err, res) {
                 if (err) return done(err);
-                _([{
+                highland.pipeThrough([{
                     id: res.id
-                }]).pipe(db.streamRead()).on('data', function(doc) {
+                }], db.streamRead()).on('data', function(doc) {
                     doc.should.be.type('object').with.property('_id', id);
                     done();
                 });
@@ -207,9 +207,9 @@ describe('Class / DB:', function() {
 
         it('can save with stream and read with stream', function(done) {
             var id = uid(7);
-            _([{
+            highland.pipeThrough([{
                 id: id
-            }]).pipe(db.streamSave()).pipe(db.streamRead()).on('data', function(doc) {
+            }], db.streamSave(), db.streamRead()).on('data', function(doc) {
                 doc.should.be.type('object').with.property('_id', id);
                 done();
             });
@@ -217,9 +217,9 @@ describe('Class / DB:', function() {
 
         it('can save with stream and read with stream', function(done) {
             var id = uid(7);
-            _([{
+            highland.pipeThrough([{
                 id: id
-            }]).pipe(db.streamSave()).pipe(db.streamRead()).on('data', function(doc) {
+            }], db.streamSave(), db.streamRead()).on('data', function(doc) {
                 doc.should.be.type('object').with.property('_id', id);
                 done();
             });
@@ -227,9 +227,9 @@ describe('Class / DB:', function() {
 
         it('can save and read with a saveAndRead stream', function(done) {
             var id = uid(7);
-            _([{
+            highland.pipeThrough([{
                 id: id
-            }]).pipe(db.streamSaveAndRead()).on('data', function(doc) {
+            }], db.streamSaveAndRead()).on('data', function(doc) {
                 doc.should.be.type('object').with.property('_id', id);
                 done();
             });
@@ -237,9 +237,9 @@ describe('Class / DB:', function() {
 
         it('can save and read with a saveAndRead stream', function(done) {
             var id = uid(7);
-            _([{
+            highland.pipeThrough([{
                 id: id
-            }]).pipe(db.streamSaveAndRead()).on('data', function(doc) {
+            }], db.streamSaveAndRead()).on('data', function(doc) {
                 doc.should.be.type('object').with.property('_id', id);
                 done();
             });
@@ -354,7 +354,7 @@ describe('Class / DB:', function() {
         });
 
         it('can view with stream', function(done) {
-            _([{}]).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+            highland.pipeThrough([{}], db.streamView('find/bySomething')).toArray(function(res) {
                 res.should.be.instanceOf(Array).with.lengthOf(3);
                 done();
             });
@@ -364,23 +364,23 @@ describe('Class / DB:', function() {
             var stream = db.streamView('find/bySomething');
             stream.write({});
             stream.end();
-            _(stream).toArray(function(res) {
+            highland(stream).toArray(function(res) {
                 res.should.be.instanceOf(Array).with.lengthOf(3);
                 done();
             });
         });
 
         it('can view with stream', function(done) {
-            _(['a']).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+            highland.pipeThrough(['a'], db.streamView('find/bySomething')).toArray(function(res) {
                 res.should.be.instanceOf(Array).with.lengthOf(2);
                 done();
             });
         });
 
         it('can view with stream (another syntax)', function(done) {
-            _([{
+            highland.pipeThrough([{
                 key: 'a'
-            }]).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+            }], db.streamView('find/bySomething')).toArray(function(res) {
                 res.should.be.instanceOf(Array).with.lengthOf(2);
                 done();
             });
@@ -390,21 +390,21 @@ describe('Class / DB:', function() {
             var stream = db.streamView('find/bySomething');
             stream.write('a');
             stream.end();
-            _(stream).toArray(function(res) {
+            highland(stream).toArray(function(res) {
                 res.should.be.instanceOf(Array).with.lengthOf(2);
                 done();
             });
         });
 
         it('can view with stream', function(done) {
-            _(['b']).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+            highland.pipeThrough(['b'], db.streamView('find/bySomething')).toArray(function(res) {
                 res.should.be.instanceOf(Array).with.lengthOf(1);
                 done();
             });
         });
 
         it('can view with stream', function(done) {
-            _(['c']).pipe(db.streamView('find/bySomething')).pipe(_()).toArray(function(res) {
+            highland.pipeThrough(['c'], db.streamView('find/bySomething')).toArray(function(res) {
                 res.should.be.instanceOf(Array).with.lengthOf(0);
                 done();
             });

@@ -445,9 +445,9 @@ module.exports = CouchDB = (function() {
     self = this;
     return through2.obj(function(chunk, enc, done) {
       if (!_.isObject(chunk)) {
-        chunk = {
+        chunk = chunk != null ? {
           key: chunk
-        };
+        } : {};
       }
       return self.view(view, chunk, (function(_this) {
         return function(err, docs) {

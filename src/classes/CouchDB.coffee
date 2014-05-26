@@ -265,7 +265,8 @@ module.exports = class CouchDB
     streamView: (view) ->
         self = @
         return through2.obj((chunk, enc, done) ->
-            chunk = { key: chunk } if not _.isObject(chunk)
+            if not _.isObject(chunk)
+                chunk = if chunk? then { key: chunk } else {}
             self.view(view, chunk, (err, docs) =>
                 return done() if err
                 @push(doc) for doc in docs
