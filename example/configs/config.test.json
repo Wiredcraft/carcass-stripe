@@ -1,5 +1,6 @@
 {
     "badCouch": {
-        "host": "127.some.thing.bad"
+        "host": "127.0.0.1",
+        "port": 123456789
     }
 }

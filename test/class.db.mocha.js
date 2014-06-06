@@ -7,17 +7,17 @@ var uid = require('uid2');
 var lib = require('../');
 var example = require('../example');
 
-describe('Class / DB:', function() {
+describe('Class / CouchDB:', function() {
 
-    var DB = lib.classes.CouchDB;
+    var CouchDB = lib.classes.CouchDB;
 
     before(function(done) {
         example.reload(done);
     });
 
     it('should be a class', function() {
-        DB.should.be.type('function');
-        (new DB()).should.be.type('object');
+        CouchDB.should.be.type('function');
+        (new CouchDB()).should.be.type('object');
     });
 
     describe('An instance:', function() {
@@ -80,6 +80,13 @@ describe('Class / DB:', function() {
             db.declare(function(err, _db) {
                 _db.should.be.type('object');
                 _db.should.equal(instance);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can declare again', function(done) {
+            db.declare(function(err, _db) {
+                _db.should.be.type('object');
                 done(err);
             }).should.equal(db);
         });
@@ -245,7 +252,23 @@ describe('Class / DB:', function() {
             });
         });
 
+        it('can read with stream and handle errors', function(done) {
+            highland.pipeThrough([uid(7)], db.streamRead())
+                .on('error', function(err) {
+                    debug('err', err);
+                    done();
+                })
+                .toArray(function(res) {
+                    debug('res', res);
+                    done(new Error('expected an error'));
+                });
+        });
+
         it('can destroy', function(done) {
+            db.destroy(done).should.equal(db);
+        });
+
+        it('can destroy again', function(done) {
             db.destroy(done).should.equal(db);
         });
 
@@ -429,6 +452,7 @@ describe('Class / DB:', function() {
         it('can not declare', function(done) {
             should.not.exist(db.db());
             db.declare(function(err, _db) {
+                debug('err', err);
                 should.exist(err);
                 should.not.exist(_db);
                 done();

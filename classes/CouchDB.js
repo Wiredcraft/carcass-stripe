@@ -1,4 +1,4 @@
-var CouchDB, Promise, carcass, config, debug, highland, through2, _,
+var CouchDB, Promise, carcass, config, dbError, debug, highland, through2, _,
   __slice = [].slice;
 
 debug = require('debug')('carcass:couch:db');
@@ -121,15 +121,18 @@ module.exports = CouchDB = (function() {
    */
 
   CouchDB.prototype.destroy = function(done) {
-    var _ref;
+    var promise;
     if (done == null) {
       done = function() {};
     }
-    if ((_ref = this.db()) != null) {
-      _ref.then(function(db) {
-        return db.destroy(done);
-      }, done);
+    promise = this.db();
+    if (promise == null) {
+      done();
+      return this;
     }
+    promise.then(function(db) {
+      return db.destroy(done);
+    }, done);
     this.db(null);
     return this;
   };
@@ -302,7 +305,7 @@ module.exports = CouchDB = (function() {
         self.read(chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done();
+              return done(dbError(err));
             }
             _this.push(doc);
             return done();
@@ -313,12 +316,12 @@ module.exports = CouchDB = (function() {
       id = (_ref = (_ref1 = chunk._id) != null ? _ref1 : chunk.id) != null ? _ref : null;
       rev = (_ref2 = (_ref3 = chunk._rev) != null ? _ref3 : chunk.rev) != null ? _ref2 : null;
       if (id == null) {
-        return done();
+        return done(new Error('id is required'));
       }
       return self.read(id, rev, (function(_this) {
         return function(err, doc) {
           if (err) {
-            return done();
+            return done(dbError(err));
           }
           _this.push(doc);
           return done();
@@ -348,7 +351,7 @@ module.exports = CouchDB = (function() {
         return self.save(id, rev, chunk, (function(_this) {
           return function(err, res) {
             if (err) {
-              return done();
+              return done(dbError(err));
             }
             _this.push(res);
             return done();
@@ -358,7 +361,7 @@ module.exports = CouchDB = (function() {
         return self.save(id, chunk, (function(_this) {
           return function(err, res) {
             if (err) {
-              return done();
+              return done(dbError(err));
             }
             _this.push(res);
             return done();
@@ -368,7 +371,7 @@ module.exports = CouchDB = (function() {
         return self.save(chunk, (function(_this) {
           return function(err, res) {
             if (err) {
-              return done();
+              return done(dbError(err));
             }
             _this.push(res);
             return done();
@@ -398,7 +401,7 @@ module.exports = CouchDB = (function() {
         return self.saveAndRead(id, rev, chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done();
+              return done(dbError(err));
             }
             _this.push(doc);
             return done();
@@ -408,7 +411,7 @@ module.exports = CouchDB = (function() {
         return self.saveAndRead(id, chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done();
+              return done(dbError(err));
             }
             _this.push(doc);
             return done();
@@ -418,7 +421,7 @@ module.exports = CouchDB = (function() {
         return self.saveAndRead(chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done();
+              return done(dbError(err));
             }
             _this.push(doc);
             return done();
@@ -453,7 +456,7 @@ module.exports = CouchDB = (function() {
         return function(err, docs) {
           var doc, _i, _len;
           if (err) {
-            return done();
+            return done(dbError(err));
           }
           for (_i = 0, _len = docs.length; _i < _len; _i++) {
             doc = docs[_i];
@@ -479,3 +482,19 @@ carcass.mixable(CouchDB);
 CouchDB.prototype.mixin(carcass.proto.uid);
 
 CouchDB.prototype.mixin(config.proto.consumer);
+
+
+/**
+ * Helper.
+ *
+ * For the streams.
+ *
+ * Until Cradle returns real errors.
+ */
+
+dbError = function(err) {
+  if ((err != null) && err.error) {
+    return new Error(err.error);
+  }
+  return err;
+};

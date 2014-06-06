@@ -84,7 +84,11 @@ module.exports = class CouchDB
      * @public
     ####
     destroy: (done = ->) ->
-        @db()?.then((db) ->
+        promise = @db()
+        if not promise?
+            done()
+            return @
+        promise.then((db) ->
             db.destroy(done)
         , done)
         @db(null)
@@ -164,9 +168,10 @@ module.exports = class CouchDB
     streamRead: ->
         self = @
         return through2.obj((chunk, enc, done) ->
+            # String is used as _id.
             if _.isString(chunk)
                 self.read(chunk, (err, doc) =>
-                    return done() if err
+                    return done(dbError(err)) if err
                     @push(doc)
                     done()
                 )
@@ -174,10 +179,9 @@ module.exports = class CouchDB
             # Assume it's an object otherwise.
             id = chunk._id ? chunk.id ? null
             rev = chunk._rev ? chunk.rev ? null
-            # .
-            return done() if not id?
+            return done(new Error('id is required')) if not id?
             self.read(id, rev, (err, doc) =>
-                return done() if err
+                return done(dbError(err)) if err
                 @push(doc)
                 done()
             )
@@ -200,19 +204,19 @@ module.exports = class CouchDB
             # .
             if id? and rev?
                 self.save(id, rev, chunk, (err, res) =>
-                    return done() if err
+                    return done(dbError(err)) if err
                     @push(res)
                     done()
                 )
             else if id?
                 self.save(id, chunk, (err, res) =>
-                    return done() if err
+                    return done(dbError(err)) if err
                     @push(res)
                     done()
                 )
             else
                 self.save(chunk, (err, res) =>
-                    return done() if err
+                    return done(dbError(err)) if err
                     @push(res)
                     done()
                 )
@@ -234,19 +238,19 @@ module.exports = class CouchDB
             # .
             if id? and rev?
                 self.saveAndRead(id, rev, chunk, (err, doc) =>
-                    return done() if err
+                    return done(dbError(err)) if err
                     @push(doc)
                     done()
                 )
             else if id?
                 self.saveAndRead(id, chunk, (err, doc) =>
-                    return done() if err
+                    return done(dbError(err)) if err
                     @push(doc)
                     done()
                 )
             else
                 self.saveAndRead(chunk, (err, doc) =>
-                    return done() if err
+                    return done(dbError(err)) if err
                     @push(doc)
                     done()
                 )
@@ -268,7 +272,7 @@ module.exports = class CouchDB
             if not _.isObject(chunk)
                 chunk = if chunk? then { key: chunk } else {}
             self.view(view, chunk, (err, docs) =>
-                return done() if err
+                return done(dbError(err)) if err
                 @push(doc) for doc in docs
                 done()
             )
@@ -280,3 +284,15 @@ module.exports = class CouchDB
 carcass.mixable(CouchDB)
 CouchDB::mixin(carcass.proto.uid)
 CouchDB::mixin(config.proto.consumer)
+
+###*
+ * Helper.
+ *
+ * For the streams.
+ *
+ * Until Cradle returns real errors.
+###
+dbError = (err) ->
+    if err? and err.error
+        return new Error(err.error)
+    return err
