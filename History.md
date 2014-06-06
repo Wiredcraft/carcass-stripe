@@ -1,4 +1,10 @@
 
+0.3.2 / 2014-06-06
+==================
+
+ * Pass real errors with streams. Fixed db.destroy().
+ * Use carcass.highland.pipeThrough() with the tests.
+
 0.3.1 / 2014-05-05
 ==================
 
