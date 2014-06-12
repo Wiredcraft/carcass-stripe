@@ -1,4 +1,9 @@
 
+0.3.3 / 2014-06-12
+==================
+
+ * Added db.all() and db.streamAll() to get all docs from a DB.
+
 0.3.2 / 2014-06-06
 ==================
 
