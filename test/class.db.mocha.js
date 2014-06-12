@@ -433,6 +433,21 @@ describe('Class / CouchDB:', function() {
             });
         });
 
+        it('can get all', function(done) {
+            db.all(function(err, res) {
+                res.should.be.instanceOf(Array).with.lengthOf(6);
+                done(err);
+            }).should.equal(db);
+        });
+
+        it('can get all with stream', function(done) {
+            highland.pipeThrough(['whatever'], db.streamAll()).toArray(function(res) {
+                debug('res', res);
+                res.should.be.instanceOf(Array).with.lengthOf(6);
+                done();
+            });
+        });
+
         it('can destroy', function(done) {
             db.destroy(done).should.equal(db);
         });

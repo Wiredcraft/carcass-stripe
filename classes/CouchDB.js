@@ -281,6 +281,28 @@ module.exports = CouchDB = (function() {
 
 
   /**
+   * Route all.
+   *
+   * @public
+   */
+
+  CouchDB.prototype.all = function() {
+    var args, done, _i;
+    args = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), done = arguments[_i++];
+    if (done == null) {
+      done = function() {};
+    }
+    return this.declare(function(err, db) {
+      if (err) {
+        return done(err);
+      } else {
+        return db.all.apply(db, __slice.call(args).concat([done]));
+      }
+    });
+  };
+
+
+  /**
    * Stream APIs.
    *
    * TODO: handle errors?
@@ -453,6 +475,39 @@ module.exports = CouchDB = (function() {
         } : {};
       }
       return self.view(view, chunk, (function(_this) {
+        return function(err, docs) {
+          var doc, _i, _len;
+          if (err) {
+            return done(dbError(err));
+          }
+          for (_i = 0, _len = docs.length; _i < _len; _i++) {
+            doc = docs[_i];
+            _this.push(doc);
+          }
+          return done();
+        };
+      })(this));
+    });
+  };
+
+
+  /**
+   * Read all docs through a stream, where you pipe in the options (can be
+   *   empty) and pipe out the results or an error.
+   *
+   * @return {Transform} a transform stream
+   *
+   * @public
+   */
+
+  CouchDB.prototype.streamAll = function() {
+    var self;
+    self = this;
+    return through2.obj(function(chunk, enc, done) {
+      if (!_.isObject(chunk)) {
+        chunk = {};
+      }
+      return self.all(chunk, (function(_this) {
         return function(err, docs) {
           var doc, _i, _len;
           if (err) {

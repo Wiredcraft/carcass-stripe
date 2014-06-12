@@ -152,6 +152,14 @@ module.exports = class CouchDB
         @declare((err, db) -> if err then done(err) else db.view(args..., done))
 
     ###*
+     * Route all.
+     *
+     * @public
+    ####
+    all: (args..., done = ->) ->
+        @declare((err, db) -> if err then done(err) else db.all(args..., done))
+
+    ###*
      * Stream APIs.
      *
      * TODO: handle errors?
@@ -272,6 +280,26 @@ module.exports = class CouchDB
             if not _.isObject(chunk)
                 chunk = if chunk? then { key: chunk } else {}
             self.view(view, chunk, (err, docs) =>
+                return done(dbError(err)) if err
+                @push(doc) for doc in docs
+                done()
+            )
+        )
+
+    ###*
+     * Read all docs through a stream, where you pipe in the options (can be
+     *   empty) and pipe out the results or an error.
+     *
+     * @return {Transform} a transform stream
+     *
+     * @public
+    ###
+    streamAll: ->
+        self = @
+        return through2.obj((chunk, enc, done) ->
+            # The chunk is used as the options, if possible.
+            chunk = {} if not _.isObject(chunk)
+            self.all(chunk, (err, docs) =>
                 return done(dbError(err)) if err
                 @push(doc) for doc in docs
                 done()
