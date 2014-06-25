@@ -63,13 +63,6 @@ module.exports = class CouchDB
                     # Create.
                     db.create((err) ->
                         return reject(err) if err
-                        # Save design documents. This doesn't block the process
-                        # and we don't care if there's a broken view.
-                        if config.design?
-                            for key, doc of config.design
-                                db.save('_design/' + key, doc, (err) ->
-                                    debug(err) if err
-                                )
                         return resolve(db)
                     )
                 )

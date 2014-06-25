@@ -91,20 +91,8 @@ module.exports = CouchDB = (function() {
               return resolve(db);
             }
             return db.create(function(err) {
-              var doc, key, _ref1;
               if (err) {
                 return reject(err);
-              }
-              if (config.design != null) {
-                _ref1 = config.design;
-                for (key in _ref1) {
-                  doc = _ref1[key];
-                  db.save('_design/' + key, doc, function(err) {
-                    if (err) {
-                      return debug(err);
-                    }
-                  });
-                }
               }
               return resolve(db);
             });
