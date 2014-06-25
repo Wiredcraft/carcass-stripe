@@ -1,10 +1,12 @@
 debug = require('debug')('carcass:couch:db')
 
 _ = require('lodash')
+util = require('util')
 Promise = require('bluebird')
 through2 = require('through2')
 carcass = require('carcass')
 config = require('carcass-config')
+httpError = require('build-http-error')
 highland = carcass.highland
 
 ###*
@@ -179,7 +181,7 @@ module.exports = class CouchDB
             # String is used as _id.
             if _.isString(chunk)
                 self.read(chunk, (err, doc) =>
-                    return done(dbError(err)) if err
+                    return done(self.httpError(err)) if err
                     @push(doc)
                     done()
                 )
@@ -189,7 +191,7 @@ module.exports = class CouchDB
             rev = chunk._rev ? chunk.rev ? null
             return done(new Error('id is required')) if not id?
             self.read(id, rev, (err, doc) =>
-                return done(dbError(err)) if err
+                return done(self.httpError(err)) if err
                 @push(doc)
                 done()
             )
@@ -212,19 +214,19 @@ module.exports = class CouchDB
             # .
             if id? and rev?
                 self.save(id, rev, chunk, (err, res) =>
-                    return done(dbError(err)) if err
+                    return done(self.httpError(err)) if err
                     @push(res)
                     done()
                 )
             else if id?
                 self.save(id, chunk, (err, res) =>
-                    return done(dbError(err)) if err
+                    return done(self.httpError(err)) if err
                     @push(res)
                     done()
                 )
             else
                 self.save(chunk, (err, res) =>
-                    return done(dbError(err)) if err
+                    return done(self.httpError(err)) if err
                     @push(res)
                     done()
                 )
@@ -246,19 +248,19 @@ module.exports = class CouchDB
             # .
             if id? and rev?
                 self.saveAndRead(id, rev, chunk, (err, doc) =>
-                    return done(dbError(err)) if err
+                    return done(self.httpError(err)) if err
                     @push(doc)
                     done()
                 )
             else if id?
                 self.saveAndRead(id, chunk, (err, doc) =>
-                    return done(dbError(err)) if err
+                    return done(self.httpError(err)) if err
                     @push(doc)
                     done()
                 )
             else
                 self.saveAndRead(chunk, (err, doc) =>
-                    return done(dbError(err)) if err
+                    return done(self.httpError(err)) if err
                     @push(doc)
                     done()
                 )
@@ -280,7 +282,7 @@ module.exports = class CouchDB
             if not _.isObject(chunk)
                 chunk = if chunk? then { key: chunk } else {}
             self.view(view, chunk, (err, docs) =>
-                return done(dbError(err)) if err
+                return done(self.httpError(err)) if err
                 @push(doc) for doc in docs
                 done()
             )
@@ -300,11 +302,30 @@ module.exports = class CouchDB
             # The chunk is used as the options, if possible.
             chunk = {} if not _.isObject(chunk)
             self.all(chunk, (err, docs) =>
-                return done(dbError(err)) if err
+                return done(self.httpError(err)) if err
                 @push(doc) for doc in docs
                 done()
             )
         )
+
+    ###*
+     * Helper.
+     *
+     * Build an HTTP Error from a Cradle Error (not necessarily a real error).
+    ###
+    httpError: (res) ->
+        return httpError() if not res?
+        code =
+            if res.headers? and res.headers.status? then res.headers.status
+            else 500
+        message =
+            if util.isError(res) then res
+            else if res.error? and res.reason? then res.error + ' (' + res.reason + ')'
+            else if res.error? then res.error
+            else null
+        err = httpError(code, message)
+        Error.captureStackTrace(err, @httpError)
+        return err
 
 ###*
  * Mixins.
@@ -312,15 +333,3 @@ module.exports = class CouchDB
 carcass.mixable(CouchDB)
 CouchDB::mixin(carcass.proto.uid)
 CouchDB::mixin(config.proto.consumer)
-
-###*
- * Helper.
- *
- * For the streams.
- *
- * Until Cradle returns real errors.
-###
-dbError = (err) ->
-    if err? and err.error
-        return new Error(err.error)
-    return err

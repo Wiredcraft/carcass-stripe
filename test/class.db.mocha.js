@@ -255,13 +255,33 @@ describe('Class / CouchDB:', function() {
         it('can read with stream and handle errors', function(done) {
             highland.pipeThrough([uid(7)], db.streamRead())
                 .on('error', function(err) {
-                    debug('err', err);
+                    err.should.be.instanceOf(Error);
+                    err.should.have.property('status', 404);
                     done();
                 })
                 .toArray(function(res) {
                     debug('res', res);
                     done(new Error('expected an error'));
                 });
+        });
+
+        it('can save with stream and handle errors', function(done) {
+            var id = uid(7);
+            highland.pipeThrough([{
+                id: id
+            }], db.streamSaveAndRead()).on('data', function(doc) {
+                doc.should.be.type('object').with.property('_id', id);
+                highland.pipeThrough([doc, doc], db.streamSaveAndRead())
+                    .on('error', function(err) {
+                        err.should.be.instanceOf(Error);
+                        err.should.have.property('status', 409);
+                        done();
+                    })
+                    .toArray(function(res) {
+                        debug('res', res);
+                        done(new Error('expected an error'));
+                    });
+            });
         });
 
         it('can destroy', function(done) {

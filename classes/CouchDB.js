@@ -1,9 +1,11 @@
-var CouchDB, Promise, carcass, config, dbError, debug, highland, through2, _,
+var CouchDB, Promise, carcass, config, debug, highland, httpError, through2, util, _,
   __slice = [].slice;
 
 debug = require('debug')('carcass:couch:db');
 
 _ = require('lodash');
+
+util = require('util');
 
 Promise = require('bluebird');
 
@@ -12,6 +14,8 @@ through2 = require('through2');
 carcass = require('carcass');
 
 config = require('carcass-config');
+
+httpError = require('build-http-error');
 
 highland = carcass.highland;
 
@@ -327,7 +331,7 @@ module.exports = CouchDB = (function() {
         self.read(chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done(dbError(err));
+              return done(self.httpError(err));
             }
             _this.push(doc);
             return done();
@@ -343,7 +347,7 @@ module.exports = CouchDB = (function() {
       return self.read(id, rev, (function(_this) {
         return function(err, doc) {
           if (err) {
-            return done(dbError(err));
+            return done(self.httpError(err));
           }
           _this.push(doc);
           return done();
@@ -373,7 +377,7 @@ module.exports = CouchDB = (function() {
         return self.save(id, rev, chunk, (function(_this) {
           return function(err, res) {
             if (err) {
-              return done(dbError(err));
+              return done(self.httpError(err));
             }
             _this.push(res);
             return done();
@@ -383,7 +387,7 @@ module.exports = CouchDB = (function() {
         return self.save(id, chunk, (function(_this) {
           return function(err, res) {
             if (err) {
-              return done(dbError(err));
+              return done(self.httpError(err));
             }
             _this.push(res);
             return done();
@@ -393,7 +397,7 @@ module.exports = CouchDB = (function() {
         return self.save(chunk, (function(_this) {
           return function(err, res) {
             if (err) {
-              return done(dbError(err));
+              return done(self.httpError(err));
             }
             _this.push(res);
             return done();
@@ -423,7 +427,7 @@ module.exports = CouchDB = (function() {
         return self.saveAndRead(id, rev, chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done(dbError(err));
+              return done(self.httpError(err));
             }
             _this.push(doc);
             return done();
@@ -433,7 +437,7 @@ module.exports = CouchDB = (function() {
         return self.saveAndRead(id, chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done(dbError(err));
+              return done(self.httpError(err));
             }
             _this.push(doc);
             return done();
@@ -443,7 +447,7 @@ module.exports = CouchDB = (function() {
         return self.saveAndRead(chunk, (function(_this) {
           return function(err, doc) {
             if (err) {
-              return done(dbError(err));
+              return done(self.httpError(err));
             }
             _this.push(doc);
             return done();
@@ -478,7 +482,7 @@ module.exports = CouchDB = (function() {
         return function(err, docs) {
           var doc, _i, _len;
           if (err) {
-            return done(dbError(err));
+            return done(self.httpError(err));
           }
           for (_i = 0, _len = docs.length; _i < _len; _i++) {
             doc = docs[_i];
@@ -511,7 +515,7 @@ module.exports = CouchDB = (function() {
         return function(err, docs) {
           var doc, _i, _len;
           if (err) {
-            return done(dbError(err));
+            return done(self.httpError(err));
           }
           for (_i = 0, _len = docs.length; _i < _len; _i++) {
             doc = docs[_i];
@@ -521,6 +525,25 @@ module.exports = CouchDB = (function() {
         };
       })(this));
     });
+  };
+
+
+  /**
+   * Helper.
+   *
+   * Build an HTTP Error from a Cradle Error (not necessarily a real error).
+   */
+
+  CouchDB.prototype.httpError = function(res) {
+    var code, err, message;
+    if (res == null) {
+      return httpError();
+    }
+    code = (res.headers != null) && (res.headers.status != null) ? res.headers.status : 500;
+    message = util.isError(res) ? res : (res.error != null) && (res.reason != null) ? res.error + ' (' + res.reason + ')' : res.error != null ? res.error : null;
+    err = httpError(code, message);
+    Error.captureStackTrace(err, this.httpError);
+    return err;
   };
 
   return CouchDB;
@@ -537,19 +560,3 @@ carcass.mixable(CouchDB);
 CouchDB.prototype.mixin(carcass.proto.uid);
 
 CouchDB.prototype.mixin(config.proto.consumer);
-
-
-/**
- * Helper.
- *
- * For the streams.
- *
- * Until Cradle returns real errors.
- */
-
-dbError = function(err) {
-  if ((err != null) && err.error) {
-    return new Error(err.error);
-  }
-  return err;
-};
