@@ -62,6 +62,7 @@ describe('Class / Couch:', function() {
             db.couch().should.equal(couch);
             db.configManager().should.equal(couch.configManager());
         });
+
     });
 
     describe('An instance with an id that links to a config:', function() {
@@ -87,5 +88,7 @@ describe('Class / Couch:', function() {
         it('can disconnect', function() {
             couch.disconnect().should.equal(couch);
         });
+
     });
+
 });

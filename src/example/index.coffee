@@ -9,9 +9,10 @@ lib.mixin(config.proto.manager)
 
 # Integrate.
 lib.extend(couch, 'classes')
+lib.extend(couch, 'plugins')
 
 # Register.
-lib.register(__dirname, name) for name in ['singletons']
+lib.register(__dirname, name) for name in ['models', 'singletons']
 
 # Stack config files.
 path = require('path')

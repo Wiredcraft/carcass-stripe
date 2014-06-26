@@ -44,6 +44,8 @@
     "gulp-mocha": "latest",
     "gulp-util": "latest",
     "jshint-stylish": "latest",
+    "modella": "latest",
+    "modella-validators": "latest",
     "should": "latest",
     "uid2": "latest"
   },

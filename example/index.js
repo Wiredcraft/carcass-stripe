@@ -14,7 +14,9 @@ lib.mixin(config.proto.manager);
 
 lib.extend(couch, 'classes');
 
-_ref = ['singletons'];
+lib.extend(couch, 'plugins');
+
+_ref = ['models', 'singletons'];
 for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   name = _ref[_i];
   lib.register(__dirname, name);
