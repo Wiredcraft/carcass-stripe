@@ -76,6 +76,8 @@ module.exports = function(Model) {
           if (!_.isEmpty(_this.dirty)) {
             return _this.save(done);
           }
+          _this.model.emit('load', _this);
+          _this.emit('load');
           return done(null, _this);
         });
       };

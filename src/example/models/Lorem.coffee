@@ -32,6 +32,8 @@ Lorem.db = ->
 
 ###*
  * Just an example.
+ *
+ * While saving.
 ###
 Lorem.on('saving', (lorem, done) ->
     # Fix name.
@@ -41,11 +43,22 @@ Lorem.on('saving', (lorem, done) ->
 
 ###*
  * Just an example.
+ *
+ * While loading.
 ###
 Lorem.on('loading', (lorem, done) ->
     # Fix name.
     lorem.name(lorem.name().toLowerCase())
     done()
+)
+
+###*
+ * Just an example.
+ *
+ * After load.
+###
+Lorem.on('load', (lorem) ->
+    lorem.loadedFromDB = true
 )
 
 ###*

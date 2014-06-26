@@ -55,6 +55,9 @@ module.exports = (Model) ->
                 # TODO: handle err?
                 # Model can become dirty.
                 return @save(done) if not _.isEmpty(@dirty)
+                # After load.
+                @model.emit('load', @)
+                @emit('load')
                 # Pass self with the callback; keep consistency with the other
                 # CRUD methods.
                 done(null, @)

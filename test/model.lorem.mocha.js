@@ -58,6 +58,7 @@ describe('Model / Lorem:', function() {
                 res.should.be.instanceOf(Lorem);
                 res.primary().should.equal(id);
                 res.name().should.equal('lorem 001');
+                res.should.not.have.property('loadedFromDB');
                 done();
             });
         });
@@ -68,6 +69,7 @@ describe('Model / Lorem:', function() {
                 res.should.equal(lorem);
                 res.primary().should.equal(id);
                 res.name().should.equal('lorem 001');
+                res.should.have.property('loadedFromDB', true);
                 done();
             });
         });

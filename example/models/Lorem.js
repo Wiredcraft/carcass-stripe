@@ -47,6 +47,8 @@ Lorem.db = function() {
 
 /**
  * Just an example.
+ *
+ * While saving.
  */
 
 Lorem.on('saving', function(lorem, done) {
@@ -57,11 +59,24 @@ Lorem.on('saving', function(lorem, done) {
 
 /**
  * Just an example.
+ *
+ * While loading.
  */
 
 Lorem.on('loading', function(lorem, done) {
   lorem.name(lorem.name().toLowerCase());
   return done();
+});
+
+
+/**
+ * Just an example.
+ *
+ * After load.
+ */
+
+Lorem.on('load', function(lorem) {
+  return lorem.loadedFromDB = true;
 });
 
 
