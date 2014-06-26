@@ -1,4 +1,11 @@
 
+0.4.0 / 2014-06-26
+==================
+
+ * Added a plugin for Modella (see /example).
+ * API change: db.declare() does not auto-save design docs anymore - please use db.saveDesignDocs().
+ * Rebuilt dbError() to httpError() and exported it.
+
 0.3.3 / 2014-06-12
 ==================
 
