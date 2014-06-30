@@ -72,7 +72,7 @@ module.exports = (Model) ->
     ###
     Model.save = (done = ->) ->
         db = @db()
-        @db().saveAndRead(@toDoc(), (err, res) ->
+        @db().saveAndRead(@toDoc(), (err, res) =>
             @_onSaved(err, res, done)
         )
         return @

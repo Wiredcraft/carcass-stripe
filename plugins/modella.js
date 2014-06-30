@@ -96,9 +96,11 @@ module.exports = function(Model) {
       done = function() {};
     }
     db = this.db();
-    this.db().saveAndRead(this.toDoc(), function(err, res) {
-      return this._onSaved(err, res, done);
-    });
+    this.db().saveAndRead(this.toDoc(), (function(_this) {
+      return function(err, res) {
+        return _this._onSaved(err, res, done);
+      };
+    })(this));
     return this;
   };
 
