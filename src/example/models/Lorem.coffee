@@ -7,7 +7,7 @@ validation = require('modella-validators')
 module.exports = Lorem = modella('Lorem')
 
 Lorem.use(validation)
-Lorem.use(lib.plugins.modella)
+Lorem.use(lib.plugins.modellaCouch)
 
 ###*
  * Attributes.
