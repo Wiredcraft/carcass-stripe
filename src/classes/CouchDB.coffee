@@ -6,7 +6,7 @@ Promise = require('bluebird')
 through2 = require('through2')
 carcass = require('carcass')
 config = require('carcass-config')
-httpError = require('build-http-error')
+httpError = carcass.httpError
 highland = carcass.highland
 
 ###*

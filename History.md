@@ -1,4 +1,10 @@
 
+0.5.0 / 2014-07-29
+==================
+
+ * Added gulp-coverage. Use coffeelint.json from carcass.
+ * Renamed plugins.modella to plugins.modellaCouch.
+
 0.4.2 / 2014-06-30
 ==================
 
