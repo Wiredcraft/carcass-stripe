@@ -1,6 +1,6 @@
 {
   "name": "carcass-couch",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "(Node.js) A simple wrap of cradle plus some stream APIs, in Carcass style.",
   "author": {
     "name": "Wiredcraft",
