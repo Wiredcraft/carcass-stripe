@@ -253,6 +253,19 @@ describe('Class / CouchDB:', function() {
         });
 
         it('can read with stream and handle errors', function(done) {
+            highland.pipeThrough([{}], db.streamRead())
+                .on('error', function(err) {
+                    err.should.be.instanceOf(Error);
+                    err.should.have.property('status', 500);
+                    done();
+                })
+                .toArray(function(res) {
+                    debug('res', res);
+                    done(new Error('expected an error'));
+                });
+        });
+
+        it('can read with stream and handle errors', function(done) {
             highland.pipeThrough([uid(7)], db.streamRead())
                 .on('error', function(err) {
                     err.should.be.instanceOf(Error);
@@ -282,6 +295,67 @@ describe('Class / CouchDB:', function() {
                         done(new Error('expected an error'));
                     });
             });
+        });
+
+        it('can save and remove with stream', function(done) {
+            var id = uid(7);
+            db.save(id, {}, function(err) {
+                if (err) return done(err);
+                highland.pipeThrough([id], db.streamRemove()).on('data', function(res) {
+                    res.should.be.type('object').with.property('_id', id);
+                    done();
+                });
+            }).should.equal(db);
+        });
+
+        it('can save and remove with stream', function(done) {
+            var id = uid(7);
+            db.save(id, {}, function(err, res) {
+                if (err) return done(err);
+                highland.pipeThrough([res], db.streamRemove()).on('data', function(doc) {
+                    doc.should.be.type('object').with.property('_id', id);
+                    done();
+                });
+            }).should.equal(db);
+        });
+
+        it('can save and remove with stream', function(done) {
+            var id = uid(7);
+            db.save(id, {}, function(err, res) {
+                if (err) return done(err);
+                highland.pipeThrough([{
+                    id: res.id
+                }], db.streamRemove()).on('data', function(doc) {
+                    doc.should.be.type('object').with.property('_id', id);
+                    done();
+                });
+            }).should.equal(db);
+        });
+
+        it('can remove with stream and handle errors', function(done) {
+            highland.pipeThrough([{}], db.streamRemove())
+                .on('error', function(err) {
+                    err.should.be.instanceOf(Error);
+                    err.should.have.property('status', 500);
+                    done();
+                })
+                .toArray(function(res) {
+                    debug('res', res);
+                    done(new Error('expected an error'));
+                });
+        });
+
+        it('can remove with stream and handle errors', function(done) {
+            highland.pipeThrough([uid(7)], db.streamRemove())
+                .on('error', function(err) {
+                    err.should.be.instanceOf(Error);
+                    err.should.have.property('status', 404);
+                    done();
+                })
+                .toArray(function(res) {
+                    debug('res', res);
+                    done(new Error('expected an error'));
+                });
         });
 
         it('can destroy', function(done) {

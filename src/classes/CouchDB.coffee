@@ -156,8 +156,6 @@ module.exports = class CouchDB
 
     ###*
      * Stream APIs.
-     *
-     * TODO: handle errors?
     ###
 
     ###*
@@ -182,7 +180,7 @@ module.exports = class CouchDB
             # Assume it's an object otherwise.
             id = chunk._id ? chunk.id ? null
             rev = chunk._rev ? chunk.rev ? null
-            return done(new Error('id is required')) if not id?
+            return done(httpError('id is required')) if not id?
             self.read(id, rev, (err, doc) =>
                 return done(self.httpError(err)) if err
                 @push(doc)
@@ -192,7 +190,7 @@ module.exports = class CouchDB
 
     ###*
      * Save data through a stream, where you pipe in data and pipe out the
-     *   result.
+     *   results.
      *
      * @return {Transform} a transform stream
      *
@@ -257,6 +255,36 @@ module.exports = class CouchDB
                     @push(doc)
                     done()
                 )
+        )
+
+    ###*
+     * Remove data through a stream, where you pipe in an id or an object and pipe
+     *   out a result or an error.
+     *
+     * @return {Transform} a transform stream
+     *
+     * @public
+    ###
+    streamRemove: ->
+        self = @
+        return through2.obj((chunk, enc, done) ->
+            # String is used as _id.
+            if _.isString(chunk)
+                self.remove(chunk, (err, res) =>
+                    return done(self.httpError(err)) if err
+                    @push(res)
+                    done()
+                )
+                return
+            # Assume it's an object otherwise.
+            id = chunk._id ? chunk.id ? null
+            rev = chunk._rev ? chunk.rev ? null
+            return done(httpError('id is required')) if not id?
+            self.remove(id, rev, (err, res) =>
+                return done(self.httpError(err)) if err
+                @push(res)
+                done()
+            )
         )
 
     ###*

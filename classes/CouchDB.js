@@ -296,8 +296,6 @@ module.exports = CouchDB = (function() {
 
   /**
    * Stream APIs.
-   *
-   * TODO: handle errors?
    */
 
 
@@ -330,7 +328,7 @@ module.exports = CouchDB = (function() {
       id = (_ref = (_ref1 = chunk._id) != null ? _ref1 : chunk.id) != null ? _ref : null;
       rev = (_ref2 = (_ref3 = chunk._rev) != null ? _ref3 : chunk.rev) != null ? _ref2 : null;
       if (id == null) {
-        return done(new Error('id is required'));
+        return done(httpError('id is required'));
       }
       return self.read(id, rev, (function(_this) {
         return function(err, doc) {
@@ -347,7 +345,7 @@ module.exports = CouchDB = (function() {
 
   /**
    * Save data through a stream, where you pipe in data and pipe out the
-   *   result.
+   *   results.
    *
    * @return {Transform} a transform stream
    *
@@ -442,6 +440,50 @@ module.exports = CouchDB = (function() {
           };
         })(this));
       }
+    });
+  };
+
+
+  /**
+   * Remove data through a stream, where you pipe in an id or an object and pipe
+   *   out a result or an error.
+   *
+   * @return {Transform} a transform stream
+   *
+   * @public
+   */
+
+  CouchDB.prototype.streamRemove = function() {
+    var self;
+    self = this;
+    return through2.obj(function(chunk, enc, done) {
+      var id, rev, _ref, _ref1, _ref2, _ref3;
+      if (_.isString(chunk)) {
+        self.remove(chunk, (function(_this) {
+          return function(err, res) {
+            if (err) {
+              return done(self.httpError(err));
+            }
+            _this.push(res);
+            return done();
+          };
+        })(this));
+        return;
+      }
+      id = (_ref = (_ref1 = chunk._id) != null ? _ref1 : chunk.id) != null ? _ref : null;
+      rev = (_ref2 = (_ref3 = chunk._rev) != null ? _ref3 : chunk.rev) != null ? _ref2 : null;
+      if (id == null) {
+        return done(httpError('id is required'));
+      }
+      return self.remove(id, rev, (function(_this) {
+        return function(err, res) {
+          if (err) {
+            return done(self.httpError(err));
+          }
+          _this.push(res);
+          return done();
+        };
+      })(this));
     });
   };
 
