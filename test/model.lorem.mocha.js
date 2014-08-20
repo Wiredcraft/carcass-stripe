@@ -1,6 +1,6 @@
 // var debug = require('debug')('carcass:test');
 
-var should = require('should');
+require('should');
 var uid = require('uid2');
 var example = require('../example');
 
@@ -51,11 +51,11 @@ describe('Model / Lorem:', function () {
                 if (err) return done(err);
                 customer.should.be.type('object');
 
-            lorem.set({
-                stripe: {
-                    customerId: customer.id
-                }
-            });
+                lorem.set({
+                    stripe: {
+                        customerId: customer.id
+                    }
+                });
 
                 done();
             });
