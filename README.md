@@ -1,3 +1,3 @@
-# Carcass Couch
+# Carcass Stripe
 
-A simple wrap of [cradle](https://github.com/flatiron/cradle) plus some stream APIs, in Carcass style.
+A simple wrap of [Stripe](https://stripe.com/docs/api) APIs, in Carcass style.
