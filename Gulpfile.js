@@ -46,7 +46,7 @@ gulp.task('mocha', ['coffee'], function() {
         }))
         .pipe(mocha({
             reporter: 'spec',
-            timeout: 5000, 
+            timeout: 8000, 
         }))
         .pipe(coverage.report({
             outFile: 'test/coverage.html'

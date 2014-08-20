@@ -24,7 +24,7 @@ Lorem.attr('_id')
 Lorem.attr('_rev')
 
 #
-Lorem.attr('strip')
+Lorem.attr('stripe')
 
 ###*
  * The DB instance.

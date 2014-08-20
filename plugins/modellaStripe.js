@@ -59,11 +59,11 @@ module.exports = function(Model) {
   };
 
   /**
-  * Create ubscription
+  * Create subscription
   *
   * @return {this}
    */
-  return Model.prototype.createSubscription = function(customerId, planId, done) {
+  Model.prototype.createSubscription = function(customerId, planId, done) {
     var stripe;
     if (done == null) {
       done = function() {};
@@ -76,6 +76,28 @@ module.exports = function(Model) {
         return done(httpError(err));
       }
       return done(null, subscription);
+    });
+    return this;
+  };
+
+  /**
+  * Update subscription
+  *
+  * @return {this}
+   */
+  return Model.prototype.updateSubscription = function(customerId, subscriptionId, planId, done) {
+    var stripe;
+    if (done == null) {
+      done = function() {};
+    }
+    stripe = this.stripeClient();
+    stripe.customers.updateSubscription(customerId, subscriptionId, {
+      plan: planId
+    }, function(err, newSub) {
+      if (err) {
+        return done(httpError(err));
+      }
+      return done(null, newSub);
     });
     return this;
   };
