@@ -14,6 +14,8 @@ Lorem.use(validation);
 
 Lorem.use(lib.plugins.modellaCouch);
 
+Lorem.use(lib.plugins.modellaStripe);
+
 
 /**
  * Attributes.
@@ -32,6 +34,8 @@ Lorem.attr('_id');
 
 Lorem.attr('_rev');
 
+Lorem.attr('strip');
+
 
 /**
  * The DB instance.
@@ -42,6 +46,13 @@ Lorem.db = function() {
   config = (_ref = lib.get('Lorem')) != null ? _ref : {};
   dbName = (_ref1 = config.dbName) != null ? _ref1 : 'lorems';
   return (_ref2 = lib.singletons.dbs[dbName]) != null ? _ref2 : lib.singletons.couch.getDB(dbName);
+};
+
+Lorem.stripeClient = function() {
+  var config, _ref;
+  config = (_ref = lib.get('stripe')) != null ? _ref : {};
+  debug('String config %j', config);
+  return lib.singletons.stripe.getClient(config.apiKey);
 };
 
 

@@ -1,4 +1,8 @@
 {
+    "stripe": {
+        "apiKey": "p4lsGxgHqf7UZk9cCQ2erh1YelSVH8CZ",
+        "plan": "devops_free"
+    },
     "badCouch": {
         "host": "127.0.0.1",
         "port": 123456789

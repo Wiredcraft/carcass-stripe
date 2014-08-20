@@ -8,6 +8,7 @@ module.exports = Lorem = modella('Lorem')
 
 Lorem.use(validation)
 Lorem.use(lib.plugins.modellaCouch)
+Lorem.use(lib.plugins.modellaStripe)
 
 ###*
  * Attributes.
@@ -22,6 +23,9 @@ Lorem.attr('name', {
 Lorem.attr('_id')
 Lorem.attr('_rev')
 
+#
+Lorem.attr('strip')
+
 ###*
  * The DB instance.
 ###
@@ -29,6 +33,11 @@ Lorem.db = ->
     config = lib.get('Lorem') ? {}
     dbName = config.dbName ? 'lorems'
     return lib.singletons.dbs[dbName] ? lib.singletons.couch.getDB(dbName)
+
+Lorem.stripeClient = ->
+    config = lib.get('stripe') ? {}
+    debug('String config %j', config)
+    return lib.singletons.stripe.getClient(config.apiKey)
 
 ###*
  * Just an example.

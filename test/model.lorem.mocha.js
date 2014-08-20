@@ -22,6 +22,7 @@ describe('Model / Lorem:', function() {
         var lorem = null;
         var id = uid(7);
         var db = null;
+        var stripe = null;
 
         before(function() {
             lorem = new Lorem({
@@ -34,10 +35,45 @@ describe('Model / Lorem:', function() {
             lorem.should.be.type('object');
         });
 
+        it('should have a stripe client instance', function() {
+            lorem.should.have.property('stripeClient').with.type('function');
+            lorem.stripeClient().should.be.type('object');
+            stripe = lorem.stripeClient();
+        });
+
+        it('should can create customer', function(done) {
+            lorem.createCustomer('test0@test.com', {number: '4242424242424242', exp_year: 2022, exp_month: 06}, function(err, customer) {
+                if (err) return done(err);
+                customer.should.be.type('object');
+                done();
+            });
+        });
+
+        it('should can subscripe to free plan', function(done) {
+            lorem.createCustomer('test1@test.com', {number: '4242424242424242', exp_year: 2022, exp_month: 06}, function(err, customer) {
+                if (err) return done(err);
+                customer.should.be.type('object');
+                customer.id.should.be.type('string');
+
+                var customerId = customer.id;
+                var plan = 'devops_free';
+
+                lorem.createSubscription(customerId, plan, function(err, subscription) {
+                    if (err) return done(err);
+                    subscription.should.be.type('object');
+                    subscription.id.should.be.type('string');
+
+                    console.log(subscription);
+                });
+
+                done();
+            });
+        });
+
         it('should have a DB instance', function() {
-            lorem.should.have.property('db').with.type('function');
-            lorem.db().should.be.type('object');
-            db = lorem.db();
+             lorem.should.have.property('db').with.type('function');
+             lorem.db().should.be.type('object');
+             db = lorem.db();
         });
 
         it('declare DB', function(done) {

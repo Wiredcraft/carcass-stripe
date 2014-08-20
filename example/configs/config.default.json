@@ -1,4 +1,8 @@
 {
+    "stripe": {
+        "apiKey": "TjNBFkN3UMEzE7RBXxIJ7Eby",
+        "plan": "devops_free"
+    },
     // For singletons/couch, which has 'couch' as the id and the config name.
     "couch": {
         // An info for debugging; you don't need this.

@@ -11,6 +11,7 @@ describe('Index:', function() {
         lib.should.have.property('classes').with.type('object');
         lib.classes.should.have.property('Couch').with.type('function');
         lib.classes.should.have.property('CouchDB').with.type('function');
+        lib.classes.should.have.property('Stripe').with.type('function');
     });
 
 });
@@ -25,11 +26,13 @@ describe('Example:', function() {
         example.should.have.property('classes').with.type('object');
         example.classes.should.have.property('Couch').with.type('function');
         example.classes.should.have.property('CouchDB').with.type('function');
+        example.classes.should.have.property('Stripe').with.type('function');
     });
 
     it('should have singletons', function() {
         example.should.have.property('singletons').with.type('object');
         example.singletons.should.have.property('couch').with.type('object');
+        example.singletons.should.have.property('stripe').with.type('object');
     });
 
 });

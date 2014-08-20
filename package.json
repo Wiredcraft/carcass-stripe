@@ -1,6 +1,6 @@
 {
-  "name": "carcass-couch",
-  "version": "0.6.0",
+  "name": "carcass-stripe",
+  "version": "0.1.0",
   "description": "(Node.js) A simple wrap of cradle plus some stream APIs, in Carcass style.",
   "author": {
     "name": "Wiredcraft",
@@ -12,20 +12,19 @@
   ],
   "keywords": [
     "carcass",
-    "couch",
-    "couchdb",
-    "cradle",
+    "stripe",
+    "payment",
     "stream"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Wiredcraft/carcass-couch.git"
+    "url": "https://github.com/Wiredcraft/carcass-stripe.git"
   },
   "bugs": {
-    "url": "https://github.com/Wiredcraft/carcass-couch/issues"
+    "url": "https://github.com/Wiredcraft/carcass-stripe/issues"
   },
-  "homepage": "https://github.com/Wiredcraft/carcass-couch",
+  "homepage": "https://github.com/Wiredcraft/carcass-stripe",
   "dependencies": {
     "bluebird": "2.x",
     "carcass": "0.11.5",
@@ -33,6 +32,7 @@
     "cradle": "0.6.7",
     "debug": "1.x",
     "lodash": "2.x",
+    "stripe": "^2.8.0",
     "through2": "1.x"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
     "gulp-mocha": "latest",
     "gulp-util": "latest",
     "jshint-stylish": "latest",
-    "modella": "latest",
+    "modella": "^0.2.8",
     "modella-validators": "latest",
     "should": "latest",
     "uid2": "latest"
