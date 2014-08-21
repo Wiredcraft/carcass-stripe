@@ -43,16 +43,16 @@ module.exports = Stripe = (function() {
    * @public
    */
 
-  Stripe.prototype.getClient = function(apiKey) {
+  Stripe.prototype.getClient = function(secretKey) {
     var client, _ref;
     client = this.client();
     if (client != null) {
       return client;
     }
     config = (_ref = this.config()) != null ? _ref : {};
-    debug('Stripe api key', apiKey);
+    debug('Stripe secret key', secretKey);
     debug('Stripe %s, configs %j', this.id(), config);
-    client = stripe(apiKey);
+    client = stripe(secretKey);
     this.client(client);
     return client;
   };

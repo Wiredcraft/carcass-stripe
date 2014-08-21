@@ -52,7 +52,7 @@ Lorem.stripeClient = function() {
   var config, _ref;
   config = (_ref = lib.get('stripe')) != null ? _ref : {};
   debug('String config %j', config);
-  return lib.singletons.stripe.getClient(config.apiKey);
+  return lib.singletons.stripe.getClient(config.secretKey);
 };
 
 

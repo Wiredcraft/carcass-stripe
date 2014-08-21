@@ -37,7 +37,7 @@ Lorem.db = ->
 Lorem.stripeClient = ->
     config = lib.get('stripe') ? {}
     debug('String config %j', config)
-    return lib.singletons.stripe.getClient(config.apiKey)
+    return lib.singletons.stripe.getClient(config.secretKey)
 
 ###*
  * Just an example.

@@ -30,15 +30,15 @@ module.exports = class Stripe
      *
      * @public
     ###
-    getClient: (apiKey) ->
+    getClient: (secretKey) ->
         client = @client()
         if client?
             return client
         config = @config() ? {}
 
-        debug('Stripe api key', apiKey)
+        debug('Stripe secret key', secretKey)
         debug('Stripe %s, configs %j', @id(), config)
-        client = stripe(apiKey)
+        client = stripe(secretKey)
         # Cache client
         @client(client)
         return client
