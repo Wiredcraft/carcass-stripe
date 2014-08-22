@@ -1,4 +1,4 @@
-debug = require('debug')('carcass:Stripe:middlewares:fetchEvent')
+debug = require('debug')('carcass:Stripe:middlewares:fetchStripeEvent')
 
 # This middleware required to pass it a stripe client object
 module.exports = (stripe) ->

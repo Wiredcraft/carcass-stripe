@@ -1,8 +1,10 @@
-var carcass, config, couch, lib, name, path, _i, _len, _ref;
+var carcass, config, couch, lib, name, path, stripe, _i, _len, _ref;
 
-couch = require('../');
+stripe = require('..');
 
 carcass = require('carcass');
+
+couch = require('carcass-couch');
 
 config = require('carcass-config');
 
@@ -16,7 +18,11 @@ lib.extend(couch, 'classes');
 
 lib.extend(couch, 'plugins');
 
-lib.extend(couch, 'middlewares');
+lib.extend(stripe, 'classes');
+
+lib.extend(stripe, 'plugins');
+
+lib.extend(stripe, 'middlewares');
 
 _ref = ['models', 'singletons'];
 for (_i = 0, _len = _ref.length; _i < _len; _i++) {

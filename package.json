@@ -37,6 +37,7 @@
     "through2": "1.x"
   },
   "devDependencies": {
+    "carcass-couch": "0.6.0",
     "gulp": "latest",
     "gulp-coffee": "latest",
     "gulp-coffeelint": "latest",
