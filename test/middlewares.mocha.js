@@ -53,7 +53,7 @@ describe('Middlewares:', function () {
       };
 
       var res = {
-        send: function (statusCode) {
+        send: function () {
           //req.stripe.should.by.type('object');
           return done();
         }
