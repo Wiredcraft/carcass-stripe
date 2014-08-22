@@ -57,25 +57,6 @@ module.exports = Stripe = (function() {
     return client;
   };
 
-
-  /**
-   * Helper.
-   *
-   * Build an HTTP Error from a Cradle Error (not necessarily a real error).
-   */
-
-  Stripe.prototype.httpError = function(res) {
-    var code, err, message;
-    if (res == null) {
-      return httpError();
-    }
-    code = (res.headers != null) && (res.headers.status != null) ? res.headers.status : 500;
-    message = util.isError(res) ? res : (res.error != null) && (res.reason != null) ? res.error + ' (' + res.reason + ')' : res.error != null ? res.error : null;
-    err = httpError(code, message);
-    Error.captureStackTrace(err, this.httpError);
-    return err;
-  };
-
   return Stripe;
 
 })();

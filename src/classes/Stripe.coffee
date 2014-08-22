@@ -43,25 +43,6 @@ module.exports = class Stripe
         @client(client)
         return client
 
-    ###*
-     * Helper.
-     *
-     * Build an HTTP Error from a Cradle Error (not necessarily a real error).
-    ###
-    httpError: (res) ->
-        return httpError() if not res?
-        code =
-            if res.headers? and res.headers.status? then res.headers.status
-            else 500
-        message =
-            if util.isError(res) then res
-            else if res.error? and res.reason? then res.error + ' (' + res.reason + ')'
-            else if res.error? then res.error
-            else null
-        err = httpError(code, message)
-        Error.captureStackTrace(err, @httpError)
-        return err
-
 ###*
  * Mixins.
 ###

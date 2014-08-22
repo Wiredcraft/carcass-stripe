@@ -1,5 +1,6 @@
 debug = require('debug')('carcass:Stripe:middlewares:fetchEvent')
 
+# This middleware required to pass it a stripe client object
 module.exports = (stripe) ->
     return (req, res, next) ->
         #first, make sure the posted data looks like we expect
