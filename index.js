@@ -6,7 +6,7 @@ module.exports = lib = carcass.mixable();
 
 lib.mixin(carcass.proto.register);
 
-_ref = ['classes', 'plugins'];
+_ref = ['classes', 'plugins', 'middlewares'];
 for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   name = _ref[_i];
   lib.register(__dirname, name);

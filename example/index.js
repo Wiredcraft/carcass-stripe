@@ -16,6 +16,8 @@ lib.extend(couch, 'classes');
 
 lib.extend(couch, 'plugins');
 
+lib.extend(couch, 'middlewares');
+
 _ref = ['models', 'singletons'];
 for (_i = 0, _len = _ref.length; _i < _len; _i++) {
   name = _ref[_i];

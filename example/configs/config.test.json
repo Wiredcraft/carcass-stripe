@@ -1,6 +1,6 @@
 {
     "stripe": {
-        "secretKey": "p4lsGxgHqf7UZk9cCQ2erh1YelSVH8CZ"
+        "secretKey": "sk_test_TKclSIOjzEivZIFTizcvbWIi"
     },
     "badCouch": {
         "host": "127.0.0.1",

@@ -10,6 +10,7 @@ lib.mixin(config.proto.manager)
 # Integrate.
 lib.extend(couch, 'classes')
 lib.extend(couch, 'plugins')
+lib.extend(couch, 'middlewares')
 
 # Register.
 lib.register(__dirname, name) for name in ['models', 'singletons']

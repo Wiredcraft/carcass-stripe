@@ -14,6 +14,9 @@ describe('Index:', function() {
         lib.classes.should.have.property('Stripe').with.type('function');
     });
 
+    it('should have middlewares', function() {
+        lib.should.have.property('middlewares').with.type('object');
+    });
 });
 
 describe('Example:', function() {
@@ -35,4 +38,7 @@ describe('Example:', function() {
         example.singletons.should.have.property('stripe').with.type('object');
     });
 
+    it('should have middlewares', function() {
+        example.should.have.property('middlewares').with.type('object');
+    });
 });

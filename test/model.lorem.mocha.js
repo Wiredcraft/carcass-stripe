@@ -66,7 +66,7 @@ describe('Model / Lorem:', function () {
 
             stripe.customerId.should.be.type('string');
 
-            var plan = 'devops_free';
+            var plan = 'carcass_stripe_test_free';
             var customerId = stripe.customerId;
 
             lorem.createSubscription(customerId, plan, function (err, subscription) {
@@ -93,7 +93,7 @@ describe('Model / Lorem:', function () {
 
             var customerId = stripe.customerId;
             var subscriptionId = stripe.subscriptionId;
-            var newPlan = 'devops_bootstrap';
+            var newPlan = 'carcass_stripe_test_update';
 
             lorem.updateSubscription(customerId, subscriptionId, newPlan, function(err, newSub) {
                 if (err) return done(err);
