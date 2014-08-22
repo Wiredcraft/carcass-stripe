@@ -23,6 +23,11 @@ describe('Model / Lorem:', function () {
         var id = uid(7);
         var db = null;
         var stripe = null;
+        var card = {
+            number: '4242424242424242',
+            exp_year: 2022,
+            exp_month: 06
+        };
 
         before(function () {
             lorem = new Lorem({
@@ -43,11 +48,7 @@ describe('Model / Lorem:', function () {
         });
 
         it('should can create customer', function (done) {
-            lorem.createCustomer('test0@test.com', {
-                number: '4242424242424242',
-                exp_year: 2022,
-                exp_month: 06
-            }, function (err, customer) {
+            lorem.createCustomer('test0@test.com', card, function (err, customer) {
                 if (err) return done(err);
                 customer.should.be.type('object');
 
@@ -61,15 +62,41 @@ describe('Model / Lorem:', function () {
             });
         });
 
+        it('should can create card', function (done) {
+            var stripe = lorem.get('stripe');
+
+            stripe.customerId.should.be.type('string');
+
+            var customerId = stripe.customerId;
+
+            lorem.createCard(customerId, card, function (err, card) {
+                if (err) return done(err);
+                card.should.be.type('object');
+                card.id.should.be.type('string');
+                card.customer.should.equal(customerId);
+
+                lorem.set({
+                    stripe: {
+                        cardId: card.id,
+                        customerId: customerId
+                    }
+                });
+
+                done();
+            });
+        });
+
         it('should can subscripe to free plan', function (done) {
             var stripe = lorem.get('stripe');
 
             stripe.customerId.should.be.type('string');
 
             var plan = 'carcass_stripe_test_free';
+            var cardId = stripe.cardId;
             var customerId = stripe.customerId;
 
-            lorem.createSubscription(customerId, plan, function (err, subscription) {
+            lorem.createSubscription(customerId, plan, function (
+                err, subscription) {
                 if (err) return done(err);
                 subscription.should.be.type('object');
                 subscription.id.should.be.type('string');
@@ -77,6 +104,7 @@ describe('Model / Lorem:', function () {
                 lorem.set({
                     stripe: {
                         plan: plan,
+                        cardId: cardId,
                         customerId: customerId,
                         subscriptionId: subscription.id
                     }
@@ -91,24 +119,27 @@ describe('Model / Lorem:', function () {
             stripe.customerId.should.be.type('string');
             stripe.subscriptionId.should.be.type('string');
 
+            var cardId = stripe.cardId;
             var customerId = stripe.customerId;
             var subscriptionId = stripe.subscriptionId;
             var newPlan = 'carcass_stripe_test_update';
 
-            lorem.updateSubscription(customerId, subscriptionId, newPlan, function(err, newSub) {
-                if (err) return done(err);
-                newSub.plan.id.should.equal(newPlan);
+            lorem.updateSubscription(customerId, subscriptionId,
+                newPlan, function (err, newSub) {
+                    if (err) return done(err);
+                    newSub.plan.id.should.equal(newPlan);
 
-                lorem.set({
-                    stripe: {
-                        plan: newPlan,
-                        customerId: customerId,
-                        subscriptionId: newSub.id
-                    }
+                    lorem.set({
+                        stripe: {
+                            plan: newPlan,
+                            cardId: cardId,
+                            customerId: customerId,
+                            subscriptionId: newSub.id
+                        }
+                    });
+
+                    done();
                 });
-
-                done();
-            });
         });
 
         it('should have a DB instance', function () {
@@ -228,5 +259,4 @@ describe('Model / Lorem:', function () {
         });
 
     });
-
 });

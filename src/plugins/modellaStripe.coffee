@@ -28,6 +28,23 @@ module.exports = (Model) ->
     })
 
     ###*
+     * Create card
+     *
+    ###
+    Model::createCard = (customerId, card, done = ->) ->
+        stripe = @stripeClient()
+
+        stripe
+        .customers
+        .createCard(customerId, {card: card}, (err, card) ->
+            return done(httpError(err)) if err
+
+            done(null, card)
+        )
+
+        return @
+
+    ###*
      * Create customer
      *
      * @return {this}

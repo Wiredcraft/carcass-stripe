@@ -36,6 +36,27 @@ module.exports = function(Model) {
   });
 
   /**
+   * Create card
+   *
+   */
+  Model.prototype.createCard = function(customerId, card, done) {
+    var stripe;
+    if (done == null) {
+      done = function() {};
+    }
+    stripe = this.stripeClient();
+    stripe.customers.createCard(customerId, {
+      card: card
+    }, function(err, card) {
+      if (err) {
+        return done(httpError(err));
+      }
+      return done(null, card);
+    });
+    return this;
+  };
+
+  /**
    * Create customer
    *
    * @return {this}
