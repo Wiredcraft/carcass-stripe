@@ -1,8 +1,13 @@
 debug = require('debug')('carcass:Stripe:middlewares:fetchStripeEvent')
 
 # This middleware required to pass it a stripe client object
-module.exports = (stripe) ->
+module.exports = (stripe, options = {}) ->
     return (req, res, next) ->
+        # Not fetch real stripe event in development
+        if options.dev
+            req.stripeEvent = req.body or {}
+            return next()
+
         #first, make sure the posted data looks like we expect
         if (req.body.object != 'event')
             return res.send(400) #respond with HTTP bad request

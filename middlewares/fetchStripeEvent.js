@@ -2,8 +2,15 @@ var debug;
 
 debug = require('debug')('carcass:Stripe:middlewares:fetchStripeEvent');
 
-module.exports = function(stripe) {
+module.exports = function(stripe, options) {
+  if (options == null) {
+    options = {};
+  }
   return function(req, res, next) {
+    if (options.dev) {
+      req.stripeEvent = req.body || {};
+      return next();
+    }
     if (req.body.object !== 'event') {
       return res.send(400);
     }
