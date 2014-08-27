@@ -6,6 +6,7 @@ module.exports = function(stripe, options) {
   if (options == null) {
     options = {};
   }
+  debug('Options: %j', options);
   return function(req, res, next) {
     if (options.dev) {
       req.stripeEvent = req.body || {};

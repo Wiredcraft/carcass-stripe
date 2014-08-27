@@ -2,6 +2,7 @@ debug = require('debug')('carcass:Stripe:middlewares:fetchStripeEvent')
 
 # This middleware required to pass it a stripe client object
 module.exports = (stripe, options = {}) ->
+    debug('Options: %j', options)
     return (req, res, next) ->
         # Not fetch real stripe event in development
         if options.dev
