@@ -13,3 +13,8 @@
 ==================
 
  * Add middlewares
+
+0.1.3 / 2014-08-27
+==================
+
+ * Not fetch real stripe event in development
