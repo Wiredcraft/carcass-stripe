@@ -18,3 +18,8 @@
 ==================
 
  * Not fetch real stripe event in development
+
+ 0.1.4 / 2014-09-24
+ ==================
+
+  * Not fetch real stripe event in testing
