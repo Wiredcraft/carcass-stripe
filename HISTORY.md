@@ -23,3 +23,8 @@
  ==================
 
   * Not fetch real stripe event in testing
+
+0.1.5 / 2014-09-24
+==================
+
+ * Remove debug in fetchStripeEvent middleware
