@@ -8,7 +8,7 @@ module.exports = function(stripe, options) {
   }
   debug('Options: %j', options);
   return function(req, res, next) {
-    if (options.dev) {
+    if (options.dev || options.test) {
       req.stripeEvent = req.body || {};
       return next();
     }

@@ -5,7 +5,7 @@ module.exports = (stripe, options = {}) ->
     debug('Options: %j', options)
     return (req, res, next) ->
         # Not fetch real stripe event in development
-        if options.dev
+        if options.dev or options.test
             req.stripeEvent = req.body or {}
             return next()
 
