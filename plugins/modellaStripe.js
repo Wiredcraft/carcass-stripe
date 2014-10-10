@@ -61,16 +61,16 @@ module.exports = function(Model) {
    *
    * @return {this}
    */
-  Model.prototype.createCustomer = function(email, card, done) {
+  Model.prototype.createCustomer = function(options, done) {
     var stripe;
+    if (options == null) {
+      options = {};
+    }
     if (done == null) {
       done = function() {};
     }
     stripe = this.stripeClient();
-    stripe.customers.create({
-      email: email,
-      card: card
-    }, function(err, customer) {
+    stripe.customers.create(options, function(err, customer) {
       if (err) {
         return done(httpError(err));
       }

@@ -35,8 +35,8 @@ module.exports = (Model) ->
         stripe = @stripeClient()
 
         stripe
-        .customers
-        .createCard(customerId, {card: card}, (err, card) ->
+          .customers
+          .createCard(customerId, {card: card}, (err, card) ->
             return done(httpError(err)) if err
 
             done(null, card)
@@ -49,12 +49,12 @@ module.exports = (Model) ->
      *
      * @return {this}
     ###
-    Model::createCustomer = (email, card, done = ->) ->
+    Model::createCustomer = (options = {}, done = ->) ->
         stripe = @stripeClient()
 
         stripe
-        .customers
-        .create({email: email, card: card}, (err, customer) ->
+          .customers
+          .create(options, (err, customer) ->
             return done(httpError(err)) if err
 
             done(null, customer)
@@ -71,8 +71,8 @@ module.exports = (Model) ->
         stripe = @stripeClient()
 
         stripe
-        .customers
-        .createSubscription(customerId, {plan: planId}, (err, subscription) ->
+          .customers
+          .createSubscription(customerId, {plan: planId}, (err, subscription) ->
             return done(httpError(err)) if err
 
             done(null, subscription)
@@ -89,8 +89,8 @@ module.exports = (Model) ->
         stripe = @stripeClient()
 
         stripe
-        .customers
-        .updateSubscription(customerId, subscriptionId, {plan: planId}, (err, newSub) ->
+          .customers
+          .updateSubscription(customerId, subscriptionId, {plan: planId}, (err, newSub) ->
             return done(httpError(err)) if err
 
             done(null, newSub)

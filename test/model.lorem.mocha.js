@@ -47,8 +47,23 @@ describe('Model / Lorem:', function () {
             stripe = lorem.stripeClient();
         });
 
+        it('should can create customer without email and card', function (done) {
+            lorem.createCustomer({}, function (err, customer) {
+                if (err) return done(err);
+                customer.should.be.type('object');
+
+                lorem.set({
+                    stripe: {
+                        customerId: customer.id
+                    }
+                });
+
+                done();
+            });
+        });
+
         it('should can create customer', function (done) {
-            lorem.createCustomer('test0@test.com', card, function (err, customer) {
+            lorem.createCustomer({email:'test0@test.com', card:card}, function (err, customer) {
                 if (err) return done(err);
                 customer.should.be.type('object');
 
