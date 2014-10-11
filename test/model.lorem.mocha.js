@@ -110,7 +110,7 @@ describe('Model / Lorem:', function () {
             var cardId = stripe.cardId;
             var customerId = stripe.customerId;
 
-            lorem.createSubscription(customerId, plan, function (
+            lorem.createSubscription(customerId, plan, {}, function (
                 err, subscription) {
                 if (err) return done(err);
                 subscription.should.be.type('object');
@@ -140,7 +140,7 @@ describe('Model / Lorem:', function () {
             var newPlan = 'carcass_stripe_test_update';
 
             lorem.updateSubscription(customerId, subscriptionId,
-                newPlan, function (err, newSub) {
+                newPlan, {}, function (err, newSub) {
                     if (err) return done(err);
                     newSub.plan.id.should.equal(newPlan);
 

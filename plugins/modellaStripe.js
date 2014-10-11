@@ -84,15 +84,17 @@ module.exports = function(Model) {
   *
   * @return {this}
    */
-  Model.prototype.createSubscription = function(customerId, planId, done) {
+  Model.prototype.createSubscription = function(customerId, planId, options, done) {
     var stripe;
+    if (options == null) {
+      options = {};
+    }
     if (done == null) {
       done = function() {};
     }
     stripe = this.stripeClient();
-    stripe.customers.createSubscription(customerId, {
-      plan: planId
-    }, function(err, subscription) {
+    options.plan = planId;
+    stripe.customers.createSubscription(customerId, options, function(err, subscription) {
       if (err) {
         return done(httpError(err));
       }
@@ -106,15 +108,17 @@ module.exports = function(Model) {
   *
   * @return {this}
    */
-  return Model.prototype.updateSubscription = function(customerId, subscriptionId, planId, done) {
+  return Model.prototype.updateSubscription = function(customerId, subscriptionId, planId, options, done) {
     var stripe;
+    if (options == null) {
+      options = {};
+    }
     if (done == null) {
       done = function() {};
     }
     stripe = this.stripeClient();
-    stripe.customers.updateSubscription(customerId, subscriptionId, {
-      plan: planId
-    }, function(err, newSub) {
+    options.plan = planId;
+    stripe.customers.updateSubscription(customerId, subscriptionId, options, function(err, newSub) {
       if (err) {
         return done(httpError(err));
       }

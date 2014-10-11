@@ -29,7 +29,12 @@
 
  * Remove debug in fetchStripeEvent middleware
 
-0.1.6 / 2014-09-24
+0.1.6 / 2014-10-11
 ==================
 
   * Allow creating stripe customer without email and card
+
+0.1.7 / 2014-10-11
+==================
+
+  * Make api more flexible by adding an options
