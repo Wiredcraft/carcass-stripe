@@ -19,8 +19,8 @@
 
  * Not fetch real stripe event in development
 
- 0.1.4 / 2014-09-24
- ==================
+0.1.4 / 2014-09-24
+==================
 
   * Not fetch real stripe event in testing
 
@@ -28,3 +28,8 @@
 ==================
 
  * Remove debug in fetchStripeEvent middleware
+
+0.1.6 / 2014-09-24
+==================
+
+  * Allow creating stripe customer without email and card
