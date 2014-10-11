@@ -67,12 +67,13 @@ module.exports = (Model) ->
     *
     * @return {this}
     ###
-    Model::createSubscription = (customerId, planId, done = ->) ->
+    Model::createSubscription = (customerId, planId, options = {}, done = ->) ->
         stripe = @stripeClient()
+        options.plan = planId
 
         stripe
           .customers
-          .createSubscription(customerId, {plan: planId}, (err, subscription) ->
+          .createSubscription(customerId, options, (err, subscription) ->
             return done(httpError(err)) if err
 
             done(null, subscription)
@@ -85,12 +86,13 @@ module.exports = (Model) ->
     *
     * @return {this}
     ###
-    Model::updateSubscription = (customerId, subscriptionId, planId, done = ->) ->
+    Model::updateSubscription = (customerId, subscriptionId, planId, options = {}, done = ->) ->
         stripe = @stripeClient()
+        options.plan = planId
 
         stripe
           .customers
-          .updateSubscription(customerId, subscriptionId, {plan: planId}, (err, newSub) ->
+          .updateSubscription(customerId, subscriptionId, options, (err, newSub) ->
             return done(httpError(err)) if err
 
             done(null, newSub)
