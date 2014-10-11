@@ -1,6 +1,6 @@
 {
   "name": "carcass-stripe",
-  "version": "0.1.6",
+  "version": "0.1.7-dev",
   "description": "(Node.js) A simple wrap of stripe APIs, in Carcass style.",
   "author": {
     "name": "Wiredcraft",
